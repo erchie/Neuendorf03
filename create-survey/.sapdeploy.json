@@ -1,0 +1,22 @@
+{
+	"NG7": {
+		"options": {
+			"conn": {
+				"server": "https://odatang7.wgn.wuerth.com",
+				"useStrictSSL" : false
+			},
+			"ui5": {
+				"package": "/WUI/BDS_COCKPIT",
+				"bspcontainer": "/WUI/BDS_COCKPIT",
+				"bspcontainer_text": "Cockpit Applikation for BDS (ui5)",
+				"transportno": "NG7K903253",
+				"language" : "EN",
+				"calc_appindex" : true
+			},
+			"resources": {
+				"cwd": "<%= dir.distWebapp %>",
+				"src": "**/*.*"
+			}
+		}
+	}
+}
