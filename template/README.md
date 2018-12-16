@@ -16,7 +16,7 @@
     	* `git config --global user.name "John Doe"`
     	* `git config --global user.email "john.doe@wuert-it.com"`
 
-1. Install grunt-cli, bower, and eslint globally one by one or at once
+1. Install grunt-cli, and eslint globally one by one or at once
     * One by one
         * `npm install -g grunt-cli`
         * `npm install -g eslint`
