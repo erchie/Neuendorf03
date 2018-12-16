@@ -56,7 +56,23 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().navTo("detail", {
 				layout: sNextLayout
 			});
+		},
+
+		/**
+		 * Listner. Triggered when close 2nd column button is pressed.
+		 * Extends 1st column to fullscreen.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Detail
+		 * @function onColumnCloseButton
+		 */
+		onColumnCloseButton: function () {
+			var sNextLayout = this.getOwnerComponent().getModel().getProperty("/actionButtonsInfo/midColumn/closeColumn");
+			this.getOwnerComponent().getRouter().navTo("master", {
+				layout: sNextLayout
+			});
+			this.getModel("baseModel").setProperty("/oQuery", undefined);
 		}
+
 
 	});
 }, true);
