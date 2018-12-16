@@ -19,7 +19,6 @@
 1. Install grunt-cli, bower, and eslint globally one by one or at once
     * One by one
         * `npm install -g grunt-cli`
-        * `npm install -g bower`
         * `npm install -g eslint`
     * or together at once
         * `npm install -g grunt-cli bower eslint`
