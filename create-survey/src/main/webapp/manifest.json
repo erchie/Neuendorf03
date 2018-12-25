@@ -12,10 +12,11 @@
 		},
 		"dataSources": {
 			"neuedorf03Remote": {
-				"uri": "urRemoteURI",
+				"uri": "/",
 				"type": "OData",
 				"settings": {
-					"odataVersion": "2.0"
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
 				}
 			}
 		},
