@@ -82,57 +82,6 @@ module.exports = function (grunt) {
 			}
 		},
 
-		openui5_preload: {
-			dist: {
-				options: {
-					resources: {
-						cwd: "src/main/webapp",
-						prefix: "<%= appNamespaceSlash %>",
-						src : [
-							"**/*.js",
-							"**/*.fragment.html",
-							"**/*.fragment.json",
-							"**/*.fragment.xml",
-							"**/*.view.html",
-							"**/*.view.json",
-							"**/*.view.xml",
-							"**/*.properties",
-							"**/manifest.json",
-							"!lib/**",
-							"!test/**",
-							"!themes/**",
-							"!localService/**"
-						]
-					},
-					compress: true,
-					dest: "<%= dir.distWebapp %>"
-				},
-				components: true
-			},
-			distdev: {
-				options: {
-					resources: {
-						cwd: "src/main/webapp",
-						prefix: "<%= appNamespaceSlash %>",
-						src : [
-							"**/*.js",
-							"**/*.fragment.html",
-							"**/*.fragment.json",
-							"**/*.fragment.xml",
-							"**/*.view.html",
-							"**/*.view.json",
-							"**/*.view.xml",
-							"**/*.properties",
-							"**/manifest.json",
-							"!lib/**"
-						]
-					},
-					compress: true,
-					dest: "<%= dir.distWebapp %>"
-				},
-				components: true
-			}
-		},
 
 
 

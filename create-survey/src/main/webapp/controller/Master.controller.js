@@ -23,26 +23,73 @@ sap.ui.define([
 		 */
 		onInit: function () {
 			BaseController.prototype.onInit.apply(this, arguments);
+
+			//register functions on event bus
+			var oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.subscribe("dhbw.mosbach.neuendorf03.create-survey.Detail" , "removeSelections", this._removeSelections, this);
+
+		},
+
+		 /**
+		 * Handels cleanup:
+		 * Unubscripes to event bus.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Master
+		 * @function onInit
+		 * @override
+		 */
+		onExit: function () {
+			var oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.unsubscribe("dhbw.mosbach.neuendorf03.create-survey.Detail" , "removeSelections", this._removeSelections, this);
 		},
 
 
 		 /**
-		 * Listner. Triggered when test button is pressed.
-		 * Opens detail column.
+		 * Listner. Triggered when a item of the master list is pressed.
+		 * Opens detail page in mid column.
 		 * @author Eric Schuster WI16C
 		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Master
-		 * @function onTest
+		 * @function onMasterList
 		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
 		 */
-		onTest: function (oEvent) {
+		onMasterList: function (oEvent) {
 			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
 
 			//Nav to next page/opens 2nd column
 			this.getOwnerComponent().getRouter().navTo("detail", {
 				layout: oNextUIState.layout
 			});
-		}
+		},
 
+		 /**
+		 * Listner. Triggered when new survey button is pressed.
+		 * Opens form for new survey in mid column column.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Master
+		 * @function onNewSurveyButton
+		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
+		 */
+		onNewSurveyButton: function (oEvent) {
+			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
+
+			//Nav to next page/opens 2nd column
+			this.getOwnerComponent().getRouter().navTo("detail", {
+				layout: oNextUIState.layout
+			});
+		},
+
+/* ########################### helper funtions ##################################################### */
+/* ################################################################################################# */
+
+		 /**
+		 * Resets selection of master list.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Master
+		 * @function _removeSelections
+		 */
+	_removeSelections: function() {
+			this.getView().byId("idMasterList").removeSelections(true);
+		}
 
 	});
 }, true);

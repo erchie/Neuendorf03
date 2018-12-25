@@ -8,17 +8,32 @@
 	xmlns:core="sap.ui.core"
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
-	<Page>
-
-		<content>
-
-			<Button
-			id="test"
-			text="test"
-			press="onTest"/>
-
-		</content>
-
-	</Page>
+	<List
+		id="idMasterList"
+		mode="SingleSelectMaster"
+		selectionChange="onMasterList"
+		items="{
+			path: 'remote>/SurveySet'
+		}" >
+		<items>
+			<StandardListItem
+				type="Active"
+				title="{remote>Name}"
+				info="{
+					path: 'remote>Enddat',
+					formatter: '.formatter.masterListDate'
+				}"/>
+		</items>
+		<headerToolbar>
+			<Toolbar>
+				<Title text="{i18n>surveys}" level="H2" />
+				<ToolbarSpacer />
+				<Button
+					icon="sap-icon://add"
+					text="{i18n>addButton}"
+					press="onNewSurveyButton" />
+			</Toolbar>
+		</headerToolbar>
+	</List>
 
 </mvc:View>

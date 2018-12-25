@@ -45,6 +45,20 @@ sap.ui.define([
 			});
 		},
 		 /**
+		 * Listner. Triggered when close 2nd column button is pressed.
+		 * Extends 1st column to fullscreen.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof wui.fre.ui5.bedarfsschein-cockpit.controller.BaseController
+		 * @function onColumnCloseButton
+		 */
+		onColumnCloseButton: function () {
+			sap.ui.getCore().getEventBus().publish("dhbw.mosbach.neuendorf03.create-survey.Detail", "removeSelections");
+			var sNextLayout = this.getOwnerComponent().getModel().getProperty("/actionButtonsInfo/midColumn/closeColumn");
+			this.getOwnerComponent().getRouter().navTo("master", {
+				layout: sNextLayout
+			});
+		},
+		 /**
 		 * Listner. Triggered when column 2 exit fullscreen button is pressed.
 		 * Exits 2nd column fullscreen mode.
 		 * @author Eric Schuster WI16C
