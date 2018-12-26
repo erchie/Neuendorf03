@@ -28,9 +28,15 @@ sap.ui.define([
 		 */
 		init : function () {
 			var oBaseModel = new JSONModel({
-				someValues : undefined
+				titleInput 		: "",
+				descInput		: "",
+				endDatePicker	: undefined,
+				multichoice		: false
 			});
 			this.setModel(oBaseModel, "baseModel");
+
+			var oChoicesListModel = new JSONModel({});
+			this.setModel(oChoicesListModel, "choicesListModel");
 
 			//needed for routing and navigation DONT TOUCH
 			var oRouterModel = new JSONModel();

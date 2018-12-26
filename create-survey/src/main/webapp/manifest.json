@@ -112,6 +112,14 @@
 						"master",
 						"detail"
 					]
+				},
+				{
+					"pattern": "new/{layout}",
+					"name": "new",
+					"target": [
+						"master",
+						"new"
+					]
 				}
 			],
 			"targets": {
@@ -123,6 +131,11 @@
 				"detail": {
 					"viewName": "Detail",
 					"viewId": "detailView",
+					"controlAggregation": "midColumnPages"
+				},
+				"new": {
+					"viewName": "New",
+					"viewId": "newView",
 					"controlAggregation": "midColumnPages"
 				}
 			}

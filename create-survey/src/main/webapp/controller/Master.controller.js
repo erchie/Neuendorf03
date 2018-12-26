@@ -73,7 +73,7 @@ sap.ui.define([
 			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
 
 			//Nav to next page/opens 2nd column
-			this.getOwnerComponent().getRouter().navTo("detail", {
+			this.getOwnerComponent().getRouter().navTo("new", {
 				layout: oNextUIState.layout
 			});
 		},
@@ -87,7 +87,7 @@ sap.ui.define([
 		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Master
 		 * @function _removeSelections
 		 */
-	_removeSelections: function() {
+		_removeSelections: function() {
 			this.getView().byId("idMasterList").removeSelections(true);
 		}
 

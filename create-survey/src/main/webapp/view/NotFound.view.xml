@@ -10,7 +10,10 @@
 		id="page"
 		description="">
 		<customDescription>
-			<Link id="link" text="{i18n>backToHome}" press="onLinkPressed" />
+			<Link
+				id="link"
+				text="{i18n>backToHome}"
+				press="onLinkPressed" />
 		</customDescription>
 	</MessagePage>
 
