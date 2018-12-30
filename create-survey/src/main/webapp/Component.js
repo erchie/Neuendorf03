@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sap/f/FlexibleColumnLayoutSemanticHelper"
-], function (JSONModel, UIComponent, Device, FlexibleColumnLayoutSemanticHelper) {
+	"sap/f/FlexibleColumnLayoutSemanticHelper",
+	"sap/ui/core/ValueState"
+], function (JSONModel, UIComponent, Device, FlexibleColumnLayoutSemanticHelper, ValueState) {
 	"use strict";
 
 	/**
@@ -31,11 +32,25 @@ sap.ui.define([
 				titleInput 		: "",
 				descInput		: "",
 				endDatePicker	: undefined,
-				multichoice		: false
+				multichoice		: false,
+				newChoice		: "",
+				newSurveyId		: ""
 			});
 			this.setModel(oBaseModel, "baseModel");
 
-			var oChoicesListModel = new JSONModel({});
+			var oVsModel = new JSONModel({
+				newChoice 		: ValueState.None,
+				surveyEndDate	: ValueState.None,
+				surveyDesc		: ValueState.None,
+				surveyTitle		: ValueState.None
+			});
+			this.setModel(oVsModel, "vsModel");
+
+			var oChoicesListModel = new JSONModel({
+
+				"Choices" : []
+
+		  });
 			this.setModel(oChoicesListModel, "choicesListModel");
 
 			//needed for routing and navigation DONT TOUCH

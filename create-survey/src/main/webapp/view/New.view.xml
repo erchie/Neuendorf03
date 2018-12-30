@@ -67,7 +67,9 @@
 								</f:label>
 								<f:fields>
 									<Input
-										value="{baseModel>/titleInput}"/>
+										value="{baseModel>/titleInput}"
+										valueState="{vsModel>/surveyTitle}"
+										valueStateText="{i18n>vstSurveyTitle}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
@@ -80,7 +82,9 @@
 									<TextArea
 										value="{baseModel>/descInput}"
 										cols="15"
-										rows="3"/>
+										rows="3"
+										valueState="{vsModel>/surveyDesc}"
+										valueStateText="{i18n>vstSurveyDesc}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
@@ -91,8 +95,11 @@
 								</f:label>
 								<f:fields>
 									<DatePicker
-										value="{baseModel>/endDatePicker}"
-										placeholder="{i18n>datePickerPlaceholder}"/>
+										id="idEndDatePicker"
+										dateValue="{baseModel>/endDatePicker}"
+										placeholder="{i18n>datePickerPlaceholder}"
+										valueState="{vsModel>/surveyEndDate}"
+										valueStateText="{i18n>vstSurveyEndDate}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
@@ -112,16 +119,16 @@
 			</f:Form>
 
 			<List
-				id="idMasterList"
+				id="idChoicesList"
 				mode="Delete"
 				delete="onDeleteChoicesList"
 				items="{
-					path: 'choicesListModel'
+					path: 'choicesListModel>/Choices'
 				}" >
 				<items>
 					<StandardListItem
 						type="Inactive"
-						title="{Name}"/>
+						title="{choicesListModel>Name}"/>
 				</items>
 				<headerToolbar>
 					<Toolbar>
