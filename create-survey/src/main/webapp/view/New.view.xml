@@ -105,8 +105,7 @@
 							<f:FormElement>
 							    <f:label>
 									<Label
-										text="{i18n>multiChoiceLabel}"
-										required="true"/>
+										text="{i18n>multiChoiceLabel}"/>
 								</f:label>
 								<f:fields>
 									<CheckBox

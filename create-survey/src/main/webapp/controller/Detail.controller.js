@@ -1,6 +1,11 @@
 sap.ui.define([
-	"dhbw/mosbach/neuendorf03/create-survey/controller/BaseController"
-], function (BaseController) {
+	"dhbw/mosbach/neuendorf03/create-survey/controller/BaseController",
+	"sap/m/ListMode",
+	"sap/m/MessageBox",
+	"sap/viz/ui5/data/FlattenedDataset",
+	"sap/viz/ui5/data/DimensionDefinition",
+	"sap/viz/ui5/data/MeasureDefinition"
+], function (BaseController, ListMode, MessageBox, FlattenedDataset) {
 	"use strict";
 
 	/**
@@ -25,7 +30,42 @@ sap.ui.define([
 
 			this.getOwnerComponent().getRouter().getRoute("detail").attachMatched(this._onRouteMatched, this);
 
+			var oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.subscribe("dhbw.mosbach.neuendorf03.create-survey.Master" , "setDesc", this._setDesc, this);
+
+
+			var oVizFrame = this.oVizFrame = this.getView().byId("idVizFrame");
+            oVizFrame.setVizProperties({
+                legend: {
+                    title: {
+                        visible: false
+                    }
+                },
+                title: {
+                    text: this.getModel("i18n").getProperty("pieChartTitle")
+				},
+				plotArea: {
+					dataLabel: {
+						visible: true
+					}
+				}
+            });
+
 		},
+
+		 /**
+		 * Handels cleanup:
+		 * Unubscripes to event bus.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Detail
+		 * @function onInit
+		 * @override
+		 */
+		onExit: function () {
+			var oEventBus = sap.ui.getCore().getEventBus();
+			oEventBus.unsubscribe("dhbw.mosbach.neuendorf03.create-survey.Master" , "setDesc", this._setDesc, this);
+		},
+
 
 
 /* ############################ -headerbar functions- ################################## */
@@ -70,6 +110,96 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().navTo("detail", {
 				layout: sNextLayout
 			});
+		},
+
+
+/* ############################ -helper functions- ##################################### */
+/* ##################################################################################### */
+
+		_setDesc: function(sChannel, sEvent, sDesc) {
+			this.getView().byId("idTextDesc").setText(sDesc);
+		},
+
+
+		_onRouteMatched: function (oEvent) {
+
+			//close detail column if called via bookmark @todo bookmarkable
+			if (this.getView().byId("idTextDesc").getText() == "") {
+				this.onColumnCloseButton();
+			}
+
+			//bind List from association
+			var bHasVoted, oCustDataSet,
+				sPath = oEvent.getParameter("arguments")["?query"].Path,
+				oList = this.getView().byId("idChooseChoicesList"),
+				template = new sap.m.StandardListItem({
+					title	: '{remote>Choicetxt}',
+					info 	: '{remote>Votes}',
+					type	: "Active"
+				});
+			oList.bindItems( "remote>/" + sPath  + "/ChoiceSet" , template);
+			//set list select mode
+			if ( oEvent.getParameter("arguments")["?query"].MultiSelect === "true" ) {
+				oList.setMode(ListMode.MultiSelect);
+			} else {
+				oList.setMode(ListMode.SingleSelect);
+			}
+
+			//bind Pie chart from association
+			oCustDataSet = new FlattenedDataset( {
+
+				dimensions: [{
+					name: "Choice",
+					value: "{remote>Choicetxt}"
+				}],
+
+				measures: [{
+
+					name: "Votes",
+					value: "{remote>Votes}"
+				}],
+
+				data: {
+
+					path: "/" + sPath + "/ChoiceSet"
+
+				}
+
+			});
+
+			this.getView().byId("idVizFrame").setDataset(oCustDataSet);
+			this.getView().byId("idVizFrame").setModel(this.getModel("remote"));
+
+			//manage visibity
+			this.getModel("remote").read( "/" + sPath + "/VotedSet", {
+				success: function(oRetrievedResult) {
+					if ( oRetrievedResult.results.length > 0 ) {
+						bHasVoted = true;
+					} else {
+						bHasVoted = false;
+					}
+					if ( this.getModel("roleModel").getProperty("/isAdm") ) {
+						oList.setVisible(false);
+						this.getView().byId("idVizFrame").setVisible(true);
+					} else {
+						oList.setVisible(!bHasVoted);
+						this.getView().byId("idVizFrame").setVisible(bHasVoted);
+					}
+					}.bind(this),
+				error: function(oError) {
+					oList.setVisible(false);
+					this.getView().byId("idVizFrame").setVisible(false);
+					MessageBox.error(
+						this.getModel("i18n").getProperty("errorCheckVoted")
+					);
+				 }
+			});
+
+
+
+
+
+
 		}
 
 	});

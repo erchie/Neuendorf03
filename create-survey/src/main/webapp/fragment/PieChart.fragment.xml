@@ -1,0 +1,56 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:viz="sap.viz.ui5.controls"
+	xmlns:layout="sap.ui.layout"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:viz.data="sap.viz.ui5.data">
+
+
+	<layout:FixFlex
+		id='chartFixFlex'
+		minFlexSize="250">
+		<layout:flexContent>
+			<viz:Popover
+				id="idPopOver">
+			</viz:Popover>
+			<viz:VizFrame
+				id="idVizFrame"
+				uiConfig="{applicationSet:'fiori'}"
+				height='100%'
+				width="100%"
+				vizType='pie'>
+				<!-- <viz:dataset>
+					<viz.data:FlattenedDataset
+						data="{remote>/SurveySet('4')/ChoiceSet}">
+						<viz.data:dimensions>
+							<viz.data:DimensionDefinition
+								name="Choice"
+								value="{remote>Choicetxt}" />
+						</viz.data:dimensions>
+						<viz.data:measures>
+							<viz.data:MeasureDefinition
+								name="Votes"
+								value="{remote>Votes}" />
+						</viz.data:measures>
+					</viz.data:FlattenedDataset>
+				</viz:dataset> -->
+
+				<viz:feeds>
+					<viz.feeds:FeedItem
+						uid="size"
+						type="Measure"
+						values="Votes" />
+					<viz.feeds:FeedItem
+						uid="color"
+						type="Dimension"
+						values="Choice" />
+				</viz:feeds>
+			</viz:VizFrame>
+		</layout:flexContent>
+	</layout:FixFlex>
+
+
+</core:FragmentDefinition>

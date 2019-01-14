@@ -53,12 +53,23 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
 		 */
 		onMasterList: function (oEvent) {
-			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
+			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1),
+				oQuery =  {
+				Path		: oEvent.getSource().getBindingContextPath().substring(1),
+				MultiSelect	: oEvent.getSource().getBindingContext("remote").getObject().Multichoice
+			};
 
 			//Nav to next page/opens 2nd column
 			this.getOwnerComponent().getRouter().navTo("detail", {
-				layout: oNextUIState.layout
+				layout: oNextUIState.layout,
+				query: oQuery
 			});
+
+			sap.ui.getCore().getEventBus().publish(
+				"dhbw.mosbach.neuendorf03.create-survey.Master",
+				"setDesc",
+				oEvent.getSource().getBindingContext("remote").getObject().Description
+			);
 		},
 
 		 /**

@@ -29,6 +29,8 @@ sap.ui.define([
 		 */
 		init : function () {
 			var oBaseModel = new JSONModel({
+				test			: "4",
+				surveyPath		: "",
 				titleInput 		: "",
 				descInput		: "",
 				endDatePicker	: undefined,
@@ -50,8 +52,23 @@ sap.ui.define([
 
 				"Choices" : []
 
-		  });
+			});
 			this.setModel(oChoicesListModel, "choicesListModel");
+
+
+			var bIsAdm = false;
+			this.getModel("remote").read( "/IsAdmin", {
+				success: function(oRetrievedResult) {
+					bIsAdm = oRetrievedResult.IsAdm;
+				},
+				error: function(oError) {
+					bIsAdm = false;
+				 }
+			});
+			var oRoleModel = new JSONModel({
+				isAdm 	: bIsAdm
+			});
+			this.setModel(oRoleModel, "roleModel");
 
 			//needed for routing and navigation DONT TOUCH
 			var oRouterModel = new JSONModel();

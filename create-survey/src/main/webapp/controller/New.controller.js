@@ -214,47 +214,52 @@ sap.ui.define([
 		 * @todo change to deep insert, associtations in backend, to be tested.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.New
-		 * @function _createSurvey.
+		 * @function _createSurvey
 		 */
 		_createSurvey: function() {
-			var oEntry = {};
+			var oEntry = {}, oItems, mParameters, aDeferredGroup;
 
 			this.getModel("remote").read("/SurveySet/$count", {
 				success: function (sCount) {
 
 					this.getModel("baseModel").setProperty("/newSurveyId", sCount);
 
-					oEntry.Id = sCount;
+					//set batch id to group all creates of one survey
+					aDeferredGroup = this.getModel("remote").getDeferredGroups();
+					aDeferredGroup.push("batchCreate");
+					this.getModel("remote").setDeferredGroups(aDeferredGroup);
+					mParameters = { groupId:"batchCreate" };
+					oEntry.Id = parseInt( sCount, 10 )  + 1;
 					oEntry.Name = this.getModel("baseModel").getProperty("/titleInput");
 					oEntry.Description = this.getModel("baseModel").getProperty("/descInput");
 					oEntry.Multichoice = this.getModel("baseModel").getProperty("/multichoice");
 					oEntry.Closed = false;
 					oEntry.Enddat = "/Date(" + Date.parse(this.getView().byId("idEndDatePicker").getDateValue()) + ")/";
 
-					this.getModel("remote").create("/SurveySet", oEntry, {
-						success: function(oRetrievedResult) {
+					this.getModel("remote").create("/SurveySet", oEntry, mParameters);
 
-							var oEntry = {},
-								bLast = false,
-								oItems = this.getView().byId("idChoicesList").getItems();
+					oItems = this.getView().byId("idChoicesList").getItems();
 
-							for (var i = 0; i < oItems.length; i++) {
+					for (var i = 0; i < oItems.length; i++) {
 
-								if ( i === (oItems.length - 1)) {
-									bLast = true;
-								} else {
-									bLast = false;
-								}
+						oEntry = {};
 
-								oEntry.Choiceid = i;
-								oEntry.Surveyid = this.getModel("baseModel").getProperty("/newSurveyId");
-								oEntry.Votes = 0;
-								oEntry.Choicetxt = oItems[i].getTitle();
-								this._createChoice(oEntry, bLast);
-							}
+						oEntry.Choiceid = i + 1;
+						oEntry.Surveyid = this.getModel("baseModel").getProperty("/newSurveyId");
+						oEntry.Votes = 0;
+						oEntry.Choicetxt = oItems[i].getTitle();
+						this.getModel("remote").create("/ChoiceSet", oEntry, mParameters);
+					}
 
+					//fire batch
+					this.getModel("remote").submitChanges({
+						groupId: "batchCreate",
+						success: function() {
+							MessageBox.success(
+								this.getModel("i18n").getProperty("sentCreateSurvey")
+							);
 						}.bind(this),
-						error: function(oError) {
+						error: function() {
 							MessageBox.error(
 								this.getModel("i18n").getProperty("errorCreateSurvey")
 							);
@@ -267,38 +272,6 @@ sap.ui.define([
 				error: function() {
 					MessageBox.error(
 						this.getModel("i18n").getProperty("errorCountSurvey")
-					);
-				}.bind(this)
-			});
-		},
-
-
-		 /**
-		 * Helper function for creating choices.
-		 * Attempts to write choices into backend.
-		 * Displays error/success message.
-		 * @author WN00096217 (Eric Schuster)
-		 * @memberof wui.fre.ui5.bedarfsschein-cockpit.controller.Detail
-		 * @function _createChoice
-		 * @param {Object} oEntry - Entry to be inserted into backend.
-		 * @param {Boolean} bLast - Last Choice for the survey?
-		 */
-		_createChoice: function(oEntry, bLast) {
-
-			this.getModel("remote").create("/ChoiceSet", oEntry, {
-				success: function(oRetrievedResult) {
-
-					if (bLast) {
-						this.onColumnCloseButton();
-						MessageBox.error(
-							this.getModel("i18n").getProperty("succesCreateSurvey")
-						);
-					}
-
-				}.bind(bLast),
-				error: function(oError) {
-					MessageBox.error(
-						this.getModel("i18n").getProperty("errorCreateChoice")
 					);
 				}.bind(this)
 			});
