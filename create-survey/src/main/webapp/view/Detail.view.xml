@@ -64,6 +64,7 @@
 			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button
+					id="idSaveButton"
 					type="Accept"
 					text="{i18n>save}"
 					press="onSaveChoices"/>

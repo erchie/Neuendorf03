@@ -4,10 +4,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.dhmosach.ui5</groupId>
-    <artifactId>BDS</artifactId>
+    <artifactId>Survey</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-    <name>BDS</name>
+    <name>Survey</name>
 
 		<properties>
 			<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
