@@ -91,9 +91,17 @@ sap.ui.define([
 		 * @function onFullScreenButton
 		 */
 		onFullScreenButton: function () {
-			var sNextLayout = this.getModel().getProperty("/actionButtonsInfo/midColumn/fullScreen");
+			var oHashChanger = new sap.ui.core.routing.HashChanger(),
+				sHash = oHashChanger.getHash(),
+				sNextLayout = this.getModel().getProperty("/actionButtonsInfo/midColumn/fullScreen"),
+				oQuery =  {
+					Path		: sHash.slice(sHash.search(/Path=/) + 5,sHash.search(/\&MultiSelect/)),
+					MultiSelect	: sHash.slice(sHash.search(/MultiSelect=/) + 12)
+				};
+
 			this.getOwnerComponent().getRouter().navTo("detail", {
-				layout: sNextLayout
+				layout: sNextLayout,
+				query: oQuery
 			});
 		},
 		 /**
@@ -118,9 +126,16 @@ sap.ui.define([
 		 * @function onExitFullScreenButton
 		 */
 		onExitFullScreenButton: function () {
-			var sNextLayout = this.getModel().getProperty("/actionButtonsInfo/midColumn/exitFullScreen");
+			var oHashChanger = new sap.ui.core.routing.HashChanger(),
+				sHash = oHashChanger.getHash(),
+				sNextLayout = this.getModel().getProperty("/actionButtonsInfo/midColumn/exitFullScreen"),
+				oQuery =  {
+					Path		: sHash.slice(sHash.search(/Path=/) + 5,sHash.search(/\&MultiSelect/)),
+					MultiSelect	: sHash.slice(sHash.search(/MultiSelect=/) + 12)
+				};
 			this.getOwnerComponent().getRouter().navTo("detail", {
-				layout: sNextLayout
+				layout: sNextLayout,
+				query: oQuery
 			});
 		},
 
@@ -140,9 +155,52 @@ sap.ui.define([
 		},
 
 		 /**
+		 * Listner. Triggered when Close button is pressed.
+		 * Closes survey.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Detail
+		 * @function onCloseSurvey
+		 */
+		onCloseSurvey: function () {
+			var oEntry = {},
+				oHashChanger = new sap.ui.core.routing.HashChanger(),
+				sHash = oHashChanger.getHash(),
+				sSurveyId = sHash.slice(sHash.search(/\('/) + 2,sHash.search(/'\)/));
+
+			this.getModel("remote").read( "/SurveySet('" + sSurveyId + "')", {
+				success: function(oRetrievedResult) {
+					oEntry.Id = oRetrievedResult.Id;
+					oEntry.Name = oRetrievedResult.Name;
+					oEntry.Description = oRetrievedResult.Description;
+					oEntry.Multichoice = oRetrievedResult.Multichoice;
+					oEntry.Enddat = "/Date(" + Date.parse( new Date() ) + ")/";
+					this.getModel("remote").update("/SurveySet(Id='" +
+						oEntry.Id + "')", oEntry, {
+						success: function() {
+							MessageBox.success(
+								this.getModel("i18n").getProperty("successClose")
+							);
+							this.onColumnCloseButton();
+							this.getModel("remote").refresh();
+						}.bind(this),
+						error: function() {
+							MessageBox.error(
+								this.getModel("i18n").getProperty("errorClose")
+							);
+						}.bind(this)
+					});
+				}.bind(this),
+				error: function(oError) {
+					MessageBox.error(
+						this.getModel("i18n").getProperty("errorClose")
+					);
+				}.bind(this)
+			});
+		},
+
+		 /**
 		 * Listner. Triggered when save button is pressed.
 		 * Checks for selection.
-		 * Opens "are you shure?" dialog.
 		 * @author Eric Schuster WI16C
 		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.Detail
 		 * @function onSaveChoices
@@ -227,12 +285,6 @@ sap.ui.define([
 		 */
 		_onRouteMatched: function (oEvent) {
 
-			//close detail column if called via bookmark @todo bookmarkable
-			if (this.getView().byId("idTextDesc").getText() == "" || this.surveyId == "") {
-				this.onColumnCloseButton();
-			}
-
-			//bind List from association
 			var bHasVoted, oCustDataSet,
 				sPath = oEvent.getParameter("arguments")["?query"].Path,
 				oList = this.getView().byId("idChooseChoicesList"),
@@ -241,6 +293,14 @@ sap.ui.define([
 					title	: '{remote>Choicetxt}',
 					type	: "Active"
 				});
+
+			this.surveyId = sPath.replace("')", "").replace("SurveySet('", "");
+			//close detail column if called via bookmark @todo bookmarkable
+			if (this.getView().byId("idTextDesc").getText() == "" || this.surveyId == "") {
+				this.onColumnCloseButton();
+			}
+
+			//bind List from association
 			oList.bindItems( "remote>/" + sPath  + "/ChoiceSet" , template);
 			//set list select mode
 			if ( oEvent.getParameter("arguments")["?query"].MultiSelect === "true" ) {
@@ -283,18 +343,17 @@ sap.ui.define([
 						bHasVoted = false;
 					}
 					this._manageVis(bHasVoted);
-					}.bind(this),
+				}.bind(this),
 				error: function(oError) {
 					oList.setVisible(false);
 					this.getView().byId("idSaveButton").setVisible(false);
+					this.getView().byId("idCloseButton").setVisible(false);
 					this.getView().byId("idVizFrame").setVisible(false);
 					MessageBox.error(
 						this.getModel("i18n").getProperty("errorCheckVoted")
 					);
 				}.bind(this)
 			});
-
-			this.surveyId = sPath.replace("')", "").replace("SurveySet('", "");
 
 		},
 
@@ -308,13 +367,15 @@ sap.ui.define([
 		 */
 		_manageVis: function (bHasVoted) {
 
-			if ( this.getModel("roleModel").getProperty("/isAdm") ) {
+			if ( this.getModel("roleModel").getProperty("/bIsAdm") ) {
 				this.getView().byId("idChooseChoicesList").setVisible(false);
 				this.getView().byId("idSaveButton").setVisible(false);
+				this.getView().byId("idCloseButton").setVisible(true);
 				this.getView().byId("idVizFrame").setVisible(true);
 			} else {
 				this.getView().byId("idChooseChoicesList").setVisible(!bHasVoted);
 				this.getView().byId("idSaveButton").setVisible(!bHasVoted);
+				this.getView().byId("idCloseButton").setVisible(false);
 				this.getView().byId("idVizFrame").setVisible(bHasVoted);
 			}
 

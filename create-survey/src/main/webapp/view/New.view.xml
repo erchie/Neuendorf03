@@ -119,8 +119,8 @@
 
 			<List
 				id="idChoicesList"
-				mode="Delete"
-				delete="onDeleteChoicesList"
+				mode="Close"
+				close="onCloseChoicesList"
 				items="{
 					path: 'choicesListModel>/Choices'
 				}" >

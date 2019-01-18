@@ -31,7 +31,7 @@
 					level="H2" />
 				<ToolbarSpacer />
 				<Button
-					visible="{= ${roleModel>/isAdm} }"
+					visible="{= ${roleModel>/bIsAdm} }"
 					icon="sap-icon://add"
 					text="{i18n>addButton}"
 					press="onNewSurveyButton" />

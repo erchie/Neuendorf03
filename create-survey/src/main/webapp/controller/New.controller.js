@@ -222,18 +222,15 @@ sap.ui.define([
 			this.getModel("remote").read("/SurveySet/$count", {
 				success: function (sCount) {
 
-					this.getModel("baseModel").setProperty("/newSurveyId", sCount);
-
 					//set batch id to group all creates of one survey
 					aDeferredGroup = this.getModel("remote").getDeferredGroups();
 					aDeferredGroup.push("batchCreate");
 					this.getModel("remote").setDeferredGroups(aDeferredGroup);
 					mParameters = { groupId:"batchCreate" };
-					oEntry.Id = parseInt( sCount, 10 )  + 1;
+					oEntry.Id = (parseInt( sCount, 10 )  + 1).toString();
 					oEntry.Name = this.getModel("baseModel").getProperty("/titleInput");
 					oEntry.Description = this.getModel("baseModel").getProperty("/descInput");
 					oEntry.Multichoice = this.getModel("baseModel").getProperty("/multichoice");
-					oEntry.Closed = false;
 					oEntry.Enddat = "/Date(" + Date.parse(this.getView().byId("idEndDatePicker").getDateValue()) + ")/";
 
 					this.getModel("remote").create("/SurveySet", oEntry, mParameters);
@@ -244,8 +241,8 @@ sap.ui.define([
 
 						oEntry = {};
 
-						oEntry.Choiceid = i + 1;
-						oEntry.Surveyid = this.getModel("baseModel").getProperty("/newSurveyId");
+						oEntry.Choiceid = (i + 1).toString();
+						oEntry.Surveyid = (parseInt( sCount, 10 )  + 1).toString();
 						oEntry.Votes = 0;
 						oEntry.Choicetxt = oItems[i].getTitle();
 						this.getModel("remote").create("/ChoiceSet", oEntry, mParameters);

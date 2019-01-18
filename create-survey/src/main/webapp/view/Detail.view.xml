@@ -68,6 +68,11 @@
 					type="Accept"
 					text="{i18n>save}"
 					press="onSaveChoices"/>
+				<Button
+					id="idCloseButton"
+					type="Reject"
+					text="{i18n>close}"
+					press="onCloseSurvey"/>
 			</OverflowToolbar>
 
 		</footer>
