@@ -36,9 +36,6 @@
 1. Open the app in your browser: [http://localhost:8080](http://localhost:8080)
 
 
-
-
-
 ## JSDoc
 
 1. USE COMMENTS
