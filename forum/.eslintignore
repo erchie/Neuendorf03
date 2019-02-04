@@ -1,0 +1,7 @@
+src/*/target
+src/*/test
+.settings
+build
+node_modules
+src/main/webapp/lib
+src/main/webapp/doc

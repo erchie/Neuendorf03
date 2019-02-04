@@ -1,0 +1,82 @@
+<mvc:View
+	id="detailView"
+	height="100%"
+	controllerName="dhbw.mosbach.neuendorf03.forum.controller.Detail"
+	xmlns="sap.m"
+	xmlns:u="sap.ui.unified"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<Page
+		title="{i18n>detailPage}"
+		showNavButton="false">
+
+		<headerContent>
+
+			<Button
+				type="Transparent"
+				icon="sap-icon://full-screen"
+				press="onFullScreenButton"
+				tooltip="Enter Full Screen Mode"
+				visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
+			<Button
+				type="Transparent"
+				icon="sap-icon://exit-full-screen"
+				press="onExitFullScreenButton"
+				tooltip="Exit Full Screen Mode"
+				visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
+			<Button
+				type="Transparent"
+				icon="sap-icon://decline"
+				press="onColumnCloseButton"
+				tooltip="Close column"
+				visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
+
+		</headerContent>
+
+		<content>
+
+			<l:BlockLayout id="BlockLayout" background="Light">
+				<l:BlockLayoutRow>
+					<l:BlockLayoutCell
+							title="Question:">
+						<Text id = "idTextDesc" wrappingType="Hyphenated"/>
+					</l:BlockLayoutCell>
+				</l:BlockLayoutRow>
+			</l:BlockLayout>
+
+			<List
+				id="idChooseChoicesList"
+				headerText="{i18n>chooseChoicesTitle}">
+			</List>
+
+			<core:Fragment
+				fragmentName="dhbw/mosbach/neuendorf03/forum/fragment/PieChart"
+				type="XML" />
+
+
+		</content>
+
+		<footer>
+
+			<OverflowToolbar>
+				<ToolbarSpacer/>
+				<Button
+					id="idSaveButton"
+					type="Accept"
+					text="{i18n>save}"
+					press="onSaveChoices"/>
+				<Button
+					id="idCloseButton"
+					type="Reject"
+					text="{i18n>close}"
+					press="onCloseSurvey"/>
+			</OverflowToolbar>
+
+		</footer>
+
+	</Page>
+
+</mvc:View>

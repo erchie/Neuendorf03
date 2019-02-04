@@ -1,0 +1,162 @@
+<mvc:View
+	id="newView"
+	displayBlock="true"
+	height="100%"
+	controllerName="dhbw.mosbach.neuendorf03.forum.controller.New"
+	xmlns="sap.m"
+	xmlns:u="sap.ui.unified"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Page
+		title="{i18n>newSurveyTitle}"
+		showNavButton="false">
+
+		<headerContent>
+
+			<Button
+				type="Transparent"
+				icon="sap-icon://full-screen"
+				press="onFullScreenButton"
+				tooltip="Enter Full Screen Mode"
+				visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
+			<Button
+				type="Transparent"
+				icon="sap-icon://exit-full-screen"
+				press="onExitFullScreenButton"
+				tooltip="Exit Full Screen Mode"
+				visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
+			<Button
+				type="Transparent"
+				icon="sap-icon://decline"
+				press="onColumnCloseButton"
+				tooltip="Close column"
+				visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
+
+		</headerContent>
+
+		<content>
+
+			<f:Form
+				id="idForm"
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanXL="3"
+						labelSpanL="3"
+						labelSpanM="3"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="4"
+						emptySpanL="4"
+						emptySpanM="4"
+						emptySpanS="0"
+						columnsXL="1"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement>
+							    <f:label>
+									<Label
+										text="{i18n>titelLabel}"
+										required="true"/>
+								</f:label>
+								<f:fields>
+									<Input
+										value="{baseModel>/titleInput}"
+										valueState="{vsModel>/surveyTitle}"
+										valueStateText="{i18n>vstSurveyTitle}"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<Label
+										text="{i18n>descLabel}"
+										required="true"/>
+								</f:label>
+								<f:fields>
+									<TextArea
+										value="{baseModel>/descInput}"
+										cols="15"
+										rows="3"
+										valueState="{vsModel>/surveyDesc}"
+										valueStateText="{i18n>vstSurveyDesc}"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+							    <f:label>
+									<Label
+										text="{i18n>endDatLabel}"
+										required="true"/>
+								</f:label>
+								<f:fields>
+									<DatePicker
+										id="idEndDatePicker"
+										dateValue="{baseModel>/endDatePicker}"
+										placeholder="{i18n>datePickerPlaceholder}"
+										valueState="{vsModel>/surveyEndDate}"
+										valueStateText="{i18n>vstSurveyEndDate}"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+							    <f:label>
+									<Label
+										text="{i18n>multiChoiceLabel}"/>
+								</f:label>
+								<f:fields>
+									<CheckBox
+										selected="{baseModel>/multichoice}" />
+								</f:fields>
+							</f:FormElement>
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+
+			<List
+				id="idChoicesList"
+				mode="Close"
+				close="onCloseChoicesList"
+				items="{
+					path: 'choicesListModel>/Choices'
+				}" >
+				<items>
+					<StandardListItem
+						type="Inactive"
+						title="{choicesListModel>Name}"/>
+				</items>
+				<headerToolbar>
+					<Toolbar>
+						<Title
+							text="{i18n>choicesTitle}"
+							level="H2" />
+						<ToolbarSpacer />
+						<Button
+							icon="sap-icon://add"
+							press="onAddChoice" />
+					</Toolbar>
+				</headerToolbar>
+			</List>
+
+
+		</content>
+
+		<footer>
+
+			<OverflowToolbar>
+				<ToolbarSpacer/>
+				<Button
+					type="Accept"
+					text="{i18n>save}"
+					press="onSaveNewSurvey"/>
+			</OverflowToolbar>
+
+		</footer>
+
+	</Page>
+
+</mvc:View>

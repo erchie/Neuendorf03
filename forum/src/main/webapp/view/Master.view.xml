@@ -1,0 +1,92 @@
+<mvc:View
+	id="masterView"
+	displayBlock="true"
+	height="100%"
+	controllerName="dhbw.mosbach.neuendorf03.forum.controller.Master"
+	xmlns="sap.m"
+	xmlns:u="sap.ui.unified"
+	xmlns:core="sap.ui.core"
+	xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc">
+	<Table
+		id="idBDSTable"
+		updateFinished="onUpdateFinished"
+		items="{remote>/PostSet}">
+		<headerToolbar>
+			<Toolbar>
+				<Title
+					text="{i18n>posts}"
+					level="H2" />
+				<ToolbarSpacer />
+				<Button
+					icon="sap-icon://add"
+					text="{i18n>addButton}"
+					press="onNewSurveyButton" />
+			</Toolbar>
+		</headerToolbar>
+
+		<columns>
+
+
+			<Column>
+				<Text
+					text="{i18n>colTitle}" />
+			</Column>
+			<Column>
+				<Text
+					text="{i18n>colCat}" />
+			</Column>
+			<Column
+				minScreenWidth="Large"
+				demandPopin="true">
+				<Text
+					text="{i18n>colDat}" />
+			</Column>
+			<Column
+				minScreenWidth="XLarge"
+				demandPopin="true">
+				<Text
+					text="{i18n>colLCDat}" />
+			</Column>
+			<Column
+				hAlign="Left">
+				<Text
+					text="{i18n>colLikes}" />
+			</Column>
+
+
+
+		</columns>
+		<items>
+			<ColumnListItem
+					press="onBDSTable"
+					type="Navigation">
+				<cells>
+
+					<Text
+						text="{remote>Ptitle}"/>
+					<Text
+						text="{remote>Catid}"/>
+					<Text
+						text="{
+							path: 'remote>Pdat',
+							type: 'sap.ui.model.type.Date'
+						}"/>
+					<Text
+						text="{
+							path: 'remote>Plcdat',
+							type: 'sap.ui.model.type.Date'
+						}"/>
+					<ObjectNumber
+						number="{remote>Likes}"
+						state="{
+							path: 'bdsRM>Rutim',
+							formatter: '.formatter.durationCol'
+						}"/>
+
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+
+</mvc:View>
