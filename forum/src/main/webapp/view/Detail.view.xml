@@ -36,46 +36,7 @@
 
 		</headerContent>
 
-		<content>
 
-			<l:BlockLayout id="BlockLayout" background="Light">
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							title="Question:">
-						<Text id = "idTextDesc" wrappingType="Hyphenated"/>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
-			</l:BlockLayout>
-
-			<List
-				id="idChooseChoicesList"
-				headerText="{i18n>chooseChoicesTitle}">
-			</List>
-
-			<core:Fragment
-				fragmentName="dhbw/mosbach/neuendorf03/forum/fragment/PieChart"
-				type="XML" />
-
-
-		</content>
-
-		<footer>
-
-			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<Button
-					id="idSaveButton"
-					type="Accept"
-					text="{i18n>save}"
-					press="onSaveChoices"/>
-				<Button
-					id="idCloseButton"
-					type="Reject"
-					text="{i18n>close}"
-					press="onCloseSurvey"/>
-			</OverflowToolbar>
-
-		</footer>
 
 	</Page>
 

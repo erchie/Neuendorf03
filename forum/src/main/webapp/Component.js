@@ -29,7 +29,7 @@ sap.ui.define([
 		 */
 		init : function () {
 			var oBaseModel = new JSONModel({
-				test			: "4",
+				newPostCat		: undefined,
 				surveyPath		: "",
 				titleInput 		: "",
 				descInput		: "",
@@ -41,9 +41,10 @@ sap.ui.define([
 
 			var oVsModel = new JSONModel({
 				newChoice 		: ValueState.None,
+				newPostCat		: ValueState.None,
 				surveyEndDate	: ValueState.None,
-				surveyDesc		: ValueState.None,
-				surveyTitle		: ValueState.None
+				postDesc		: ValueState.None,
+				postTitle		: ValueState.None
 			});
 			this.setModel(oVsModel, "vsModel");
 

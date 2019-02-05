@@ -9,7 +9,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
-		title="{i18n>newSurveyTitle}"
+		title="{i18n>newpostTitle}"
 		showNavButton="false">
 
 		<headerContent>
@@ -68,8 +68,8 @@
 								<f:fields>
 									<Input
 										value="{baseModel>/titleInput}"
-										valueState="{vsModel>/surveyTitle}"
-										valueStateText="{i18n>vstSurveyTitle}"/>
+										valueState="{vsModel>/postTitle}"
+										valueStateText="{i18n>vstpostTitle}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
@@ -83,64 +83,32 @@
 										value="{baseModel>/descInput}"
 										cols="15"
 										rows="3"
-										valueState="{vsModel>/surveyDesc}"
-										valueStateText="{i18n>vstSurveyDesc}"/>
+										valueState="{vsModel>/postDesc}"
+										valueStateText="{i18n>vstpostDesc}"/>
 								</f:fields>
 							</f:FormElement>
 							<f:FormElement>
 							    <f:label>
 									<Label
-										text="{i18n>endDatLabel}"
+										text="{i18n>postCat}"
 										required="true"/>
 								</f:label>
 								<f:fields>
-									<DatePicker
-										id="idEndDatePicker"
-										dateValue="{baseModel>/endDatePicker}"
-										placeholder="{i18n>datePickerPlaceholder}"
-										valueState="{vsModel>/surveyEndDate}"
-										valueStateText="{i18n>vstSurveyEndDate}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement>
-							    <f:label>
-									<Label
-										text="{i18n>multiChoiceLabel}"/>
-								</f:label>
-								<f:fields>
-									<CheckBox
-										selected="{baseModel>/multichoice}" />
+									<Select
+										forceSelection="true"
+										selectedItem="{baseModel>/newPostCat}"
+										items="{
+											path: 'remote>/CategorySet',
+											sorter: { path: 'remote>Cattitle' }
+										}">
+										<core:Item key="{remore>Catid}" text="{remote>Cattitle}" />
+									</Select>
 								</f:fields>
 							</f:FormElement>
 						</f:formElements>
 					</f:FormContainer>
 				</f:formContainers>
 			</f:Form>
-
-			<List
-				id="idChoicesList"
-				mode="Close"
-				close="onCloseChoicesList"
-				items="{
-					path: 'choicesListModel>/Choices'
-				}" >
-				<items>
-					<StandardListItem
-						type="Inactive"
-						title="{choicesListModel>Name}"/>
-				</items>
-				<headerToolbar>
-					<Toolbar>
-						<Title
-							text="{i18n>choicesTitle}"
-							level="H2" />
-						<ToolbarSpacer />
-						<Button
-							icon="sap-icon://add"
-							press="onAddChoice" />
-					</Toolbar>
-				</headerToolbar>
-			</List>
 
 
 		</content>
@@ -152,7 +120,7 @@
 				<Button
 					type="Accept"
 					text="{i18n>save}"
-					press="onSaveNewSurvey"/>
+					press="onSaveNewPost"/>
 			</OverflowToolbar>
 
 		</footer>

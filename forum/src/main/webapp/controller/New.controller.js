@@ -25,12 +25,6 @@ sap.ui.define([
 			//init variables
 			BaseController.prototype.onInit.apply(this, arguments);
 
-			//init Dialogs
-			var pathHelper = "dhbw.mosbach.neuendorf03.forum.fragment.";
-			if (!this._oAddChoiceDialog) {
-				this._oAddChoiceDialog = sap.ui.xmlfragment(this.getView().getId(), pathHelper + "AddChoice", this);
-				this.getView().addDependent(this._oAddChoiceDialog);
-			}
 
 		},
 
@@ -80,97 +74,41 @@ sap.ui.define([
 			});
 		},
 
-/* ############################ -Add choice functions- ################################# */
-/* ##################################################################################### */
-
-		 /**
-		 * Listner. Triggered when add chpice button is pressed.
-		 * Opens dialog.
-		 * @author WN00096217 (Eric Schuster)
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.New
-		 * @function onAddChoice
-		 */
-		onAddChoice: function() {
-			this._oAddChoiceDialog.open();
-		},
-
-		 /**
-		 * Listner. Triggered when cancel add choice dialog button is pressed.
-		 * Closes dialog.
-		 * @author WN00096217 (Eric Schuster)
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.New
-		 * @function onCancelButton
-		 */
-		onCancelButton: function() {
-			this._oAddChoiceDialog.close();
-			this.getModel("baseModel").setProperty("/newChoice", "");
-			this.getModel("vsModel").setProperty("/newChoice", ValueState.None);
-		},
-
-		 /**
-		 * Listner. Triggered when ok add choice dialog button is pressed.
-		 * Closes dialog.
-		 * Adds line to table.
-		 * @author WN00096217 (Eric Schuster)
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.New
-		 * @function onOkButton
-		 */
-		onOkButton: function() {
-
-			if (this.getModel("baseModel").getProperty("/newChoice") === "") {
-				this.getModel("vsModel").setProperty("/newChoice", ValueState.Error);
-			} else {
-				var oData = this.getModel("choicesListModel").getData();
-				oData.Choices[oData.Choices.length] = {"Name":this.getModel("baseModel").getProperty("/newChoice")};
-				this.getModel("choicesListModel").setData(oData);
-				this._oAddChoiceDialog.close();
-				this.getModel("baseModel").setProperty("/newChoice", "");
-				this.getModel("vsModel").setProperty("/newChoice", ValueState.None);
-
-			}
-
-		},
 
 
 /* ############################ -Footerbar functions- ################################## */
 /* ##################################################################################### */
 
 		 /**
-		 * Listner. Triggered when save survey button is pressed.
+		 * Listner. Triggered when save post button is pressed.
 		 * Checks inputs
 		 * If ok:
 		 * Sends create to backend.
 		 * Closes mid column.
-		 * Resets form and table.
+		 * Resets form.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.New
-		 * @function onOkButton
+		 * @function onSaveNewPost
 		 */
-		onSaveNewSurvey: function() {
+		onSaveNewPost: function() {
 
 			var bOk = true;
 			if ( this.getModel("baseModel").getProperty("/titleInput") === "" ) {
-				this.getModel("vsModel").setProperty("/surveyTitle", ValueState.Error);
+				this.getModel("vsModel").setProperty("/postTitle", ValueState.Error);
 				bOk = false;
 			}
 			if ( this.getModel("baseModel").getProperty("/descInput") === "" ) {
-				this.getModel("vsModel").setProperty("/surveyDesc", ValueState.Error);
+				this.getModel("vsModel").setProperty("/postDesc", ValueState.Error);
 				bOk = false;
 			}
-			if ( this.getModel("baseModel").getProperty("/endDatePicker") === undefined ) {
+			if ( this.getModel("baseModel").getProperty("/newPostCat") === undefined ) {
 				this.getModel("vsModel").setProperty("/surveyEndDate", ValueState.Error);
-				bOk = false;
-			}
-			if ( this.getModel("choicesListModel").getData().Choices.length < 2 ) {
-				MessageBox.error(
-					this.getModel("i18n").getProperty("errorBoxChoicesList")
-				);
 				bOk = false;
 			}
 
 			if (bOk){
 
-				this._createSurvey();
+				this._createPost();
 
 			}
 
@@ -195,14 +133,10 @@ sap.ui.define([
 
 			this.getModel("baseModel").setProperty("/titleInput", "");
 			this.getModel("baseModel").setProperty("/descInput", "");
-			this.getModel("baseModel").setProperty("/endDatePicker", undefined);
-			this.getModel("baseModel").setProperty("/multichoice", false);
-			this.getModel("vsModel").setProperty("/surveyEndDate", ValueState.None);
-			this.getModel("vsModel").setProperty("/surveyDesc", ValueState.None);
-			this.getModel("vsModel").setProperty("/surveyTitle", ValueState.None);
-			var oData = this.getModel("choicesListModel").getData();
-			oData.Choices = [];
-			this.getModel("choicesListModel").setData(oData);
+			this.getModel("baseModel").setProperty("/newPostCat", undefined);
+			this.getModel("vsModel").setProperty("/newPostCat", ValueState.None);
+			this.getModel("vsModel").setProperty("/postDesc", ValueState.None);
+			this.getModel("vsModel").setProperty("/postTitle", ValueState.None);
 
 		},
 
@@ -214,64 +148,31 @@ sap.ui.define([
 		 * @todo change to deep insert, associtations in backend, to be tested.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.New
-		 * @function _createSurvey
+		 * @function _createPost
 		 */
-		_createSurvey: function() {
-			var oEntry = {}, oItems, mParameters, aDeferredGroup;
-
-			this.getModel("remote").read("/SurveySet/$count", {
-				success: function (sCount) {
-
-					//set batch id to group all creates of one survey
-					aDeferredGroup = this.getModel("remote").getDeferredGroups();
-					aDeferredGroup.push("batchCreate");
-					this.getModel("remote").setDeferredGroups(aDeferredGroup);
-					mParameters = { groupId:"batchCreate" };
-					oEntry.Id = (parseInt( sCount, 10 )  + 1).toString();
-					oEntry.Name = this.getModel("baseModel").getProperty("/titleInput");
-					oEntry.Description = this.getModel("baseModel").getProperty("/descInput");
-					oEntry.Multichoice = this.getModel("baseModel").getProperty("/multichoice");
-					oEntry.Enddat = "/Date(" + Date.parse(this.getView().byId("idEndDatePicker").getDateValue()) + ")/";
-
-					this.getModel("remote").create("/SurveySet", oEntry, mParameters);
-
-					oItems = this.getView().byId("idChoicesList").getItems();
-
-					for (var i = 0; i < oItems.length; i++) {
-
-						oEntry = {};
-
-						oEntry.Choiceid = (i + 1).toString();
-						oEntry.Surveyid = (parseInt( sCount, 10 )  + 1).toString();
-						oEntry.Votes = 0;
-						oEntry.Choicetxt = oItems[i].getTitle();
-						this.getModel("remote").create("/ChoiceSet", oEntry, mParameters);
-					}
-
-					//fire batch
-					this.getModel("remote").submitChanges({
-						groupId: "batchCreate",
-						success: function() {
-							MessageBox.success(
-								this.getModel("i18n").getProperty("sentCreateSurvey")
-							);
-						}.bind(this),
-						error: function() {
-							MessageBox.error(
-								this.getModel("i18n").getProperty("errorCreateSurvey")
-							);
-						}.bind(this)
-					});
+		_createPost: function() {
+			var oEntry = {};
 
 
 
+			oEntry.Postid = 1; //dummy value id is calculated in backend
+			oEntry.Ptitle = this.getModel("baseModel").getProperty("/titleInput");
+			oEntry.Ptext = this.getModel("baseModel").getProperty("/descInput");
+			oEntry.Catid = this.getModel("baseModel").getProperty("/newPostCat");
+
+			this.getModel("remote").create("/SurveySet", oEntry, {
+				success: function() {
+					MessageBox.success(
+						this.getModel("i18n").getProperty("sentCreatePost")
+					);
 				}.bind(this),
 				error: function() {
 					MessageBox.error(
-						this.getModel("i18n").getProperty("errorCountSurvey")
+						this.getModel("i18n").getProperty("errorCreatePost")
 					);
 				}.bind(this)
 			});
+
 
 		}
 
