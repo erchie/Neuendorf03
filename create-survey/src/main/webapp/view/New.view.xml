@@ -18,19 +18,19 @@
 				type="Transparent"
 				icon="sap-icon://full-screen"
 				press="onFullScreenButton"
-				tooltip="Enter Full Screen Mode"
+				tooltip="Vollbild"
 				visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"/>
 			<Button
 				type="Transparent"
 				icon="sap-icon://exit-full-screen"
 				press="onExitFullScreenButton"
-				tooltip="Exit Full Screen Mode"
+				tooltip="Vollbild beenden"
 				visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"/>
 			<Button
 				type="Transparent"
 				icon="sap-icon://decline"
 				press="onColumnCloseButton"
-				tooltip="Close column"
+				tooltip="Schließen"
 				visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"/>
 
 		</headerContent>
