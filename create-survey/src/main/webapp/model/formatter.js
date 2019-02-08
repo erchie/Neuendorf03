@@ -11,7 +11,7 @@ sap.ui.define([
 
 
 		 /**
-		 * Deleting zeros.
+		 * Formating Date.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof formatter
 		 * @function masterListDate

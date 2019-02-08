@@ -45,18 +45,18 @@ sap.ui.define([
 
 
 		 /**
-		 * Listner. Triggered when a item of the master list is pressed.
+		 * Listner. Triggered when a item of the master table is pressed.
 		 * Opens detail page in mid column.
 		 * @author Eric Schuster WI16C
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Master
-		 * @function onMasterList
+		 * @function onMasterTable
 		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
 		 */
-		onMasterList: function (oEvent) {
+		onMasterTable: function (oEvent) {
 			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1),
+				oObject = oEvent.getSource().getBindingContext("remote").getObject(),
 				oQuery =  {
-				Path		: oEvent.getSource().getBindingContextPath().substring(1),
-				MultiSelect	: oEvent.getSource().getBindingContext("remote").getObject().Multichoice
+				Path		: oEvent.getSource().getBindingContextPath().substring(1)
 			};
 
 			//Nav to next page/opens 2nd column
@@ -67,8 +67,8 @@ sap.ui.define([
 
 			sap.ui.getCore().getEventBus().publish(
 				"dhbw.mosbach.neuendorf03.forum.Master",
-				"setDesc",
-				oEvent.getSource().getBindingContext("remote").getObject().Description
+				"setDescTitle",
+				[oObject.Ptext, oObject.Ptitel, oObject.Likes]
 			);
 		},
 

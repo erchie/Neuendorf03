@@ -98,7 +98,7 @@
 										forceSelection="true"
 										selectedItem="{baseModel>/newPostCat}"
 										items="{
-											path: 'remote>/CategorySet',
+											path: 'remote>/CATEGORIESet',
 											sorter: { path: 'remote>Cattitle' }
 										}">
 										<core:Item key="{remore>Catid}" text="{remote>Cattitle}" />
