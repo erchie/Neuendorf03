@@ -113,6 +113,35 @@ sap.ui.define([
 			});
 		},
 
+		 /**
+		 * Listner. Triggered when like button is pressed.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
+		 * @function onLikeButton
+		 */
+		onLikeButton: function() {
+			var oEntry = {};
+				oEntry.Postid	= this.postId;
+				oEntry.Likes 	= parseInt(this.getView().byId("idTextLikes").getText(), 10) + 1;
+
+				this.getModel("remote").update("/PostSet(Postid='" + this.postId + "')", oEntry, {
+					success: function() {
+						MessageBox.success(
+							this.getModel("i18n").getProperty("successLike")
+						);
+						this.getModel("remote").refresh();
+						this.getView().byId("idTextLikes").setText(oEntry.Likes);
+						this.getView().byId("idLikeButton").setVisible(false);
+					}.bind(this),
+					error: function() {
+						MessageBox.error(
+							this.getModel("i18n").getProperty("errorLike")
+						);
+					}.bind(this)
+				});
+		},
+
+
 /* ############################ -Edit choice functions- ################################# */
 /* ##################################################################################### */
 
@@ -160,9 +189,68 @@ sap.ui.define([
 				this.getModel("vsModel").setProperty("/postDesc", ValueState.Error);
 			} else {
 
+				var oEntry = {};
+				oEntry.Postid	= this.postId;
+				oEntry.Ptitel	= this.getModel("baseModel").getProperty("/titleInput");
+				oEntry.Ptext	= this.getModel("baseModel").getProperty("/descInput");
+				oEntry.Pdat		= "/Date(" + Date.parse( new Date() ) + ")/";
+				oEntry.Plcdat   = oEntry.Pdat;
+				oEntry.Likes 	= 0;
+
+				this.getModel("remote").update("/PostSet(Postid='" + this.postId + "')", oEntry, {
+					success: function() {
+						MessageBox.success(
+							this.getModel("i18n").getProperty("successEdit")
+						);
+						this.getModel("remote").refresh();
+						this.getModel("baseModel").setProperty("/titleInput", oEntry.Ptitel);
+						this.getModel("baseModel").setProperty("/descInput", oEntry.Ptext);
+					}.bind(this),
+					error: function() {
+						MessageBox.error(
+							this.getModel("i18n").getProperty("errorEdit")
+						);
+					}.bind(this)
+				});
 
 			}
 
+		},
+
+/* ############################ -post functions- ##################################### */
+/* ##################################################################################### */
+
+
+		 /**
+		 * Listner. Triggered when ok edit dialog button is pressed.
+		 * Closes dialog.
+		 * Writes to backend.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
+		 * @function onPost
+		 */
+		onPost: function(oEvent) {
+
+			var oEntry = {};
+			oEntry.Comid = 1; //dummy gets generated in backend
+			oEntry.Postid = this.postId;
+			oEntry.Userid = 1; //dummy gets generated in backend
+			oEntry.Comdat = "/Date(" + Date.parse( new Date() ) + ")/";
+			oEntry.Comtxt = oEvent.getSource().getProperty("value");
+
+			this.getModel("remote").create("/PostSet", oEntry, {
+				success: function() {
+					MessageBox.success(
+						this.getModel("i18n").getProperty("successCreateComment")
+					);
+					this.getModel("remote").refresh();
+				}.bind(this),
+				error: function() {
+					MessageBox.error(
+						this.getModel("i18n").getProperty("errorCreateComment")
+					);
+				}.bind(this)
+			});
 		},
 
 
