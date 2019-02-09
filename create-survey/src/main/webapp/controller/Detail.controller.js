@@ -33,7 +33,7 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().getRoute("detail").attachMatched(this._onRouteMatched, this);
 
 			var oEventBus = sap.ui.getCore().getEventBus();
-			oEventBus.subscribe("dhbw.mosbach.neuendorf03.create-survey.Master" , "setDesc", this._setDesc, this);
+			oEventBus.subscribe("dhbw.mosbach.neuendorf03.create-survey.Master" , "setDescTitle", this._setDescTitle, this);
 
 
 			var oVizFrame = this.oVizFrame = this.getView().byId("idVizFrame");
@@ -75,7 +75,7 @@ sap.ui.define([
 		 */
 		onExit: function () {
 			var oEventBus = sap.ui.getCore().getEventBus();
-			oEventBus.unsubscribe("dhbw.mosbach.neuendorf03.create-survey.Master" , "setDesc", this._setDesc, this);
+			oEventBus.unsubscribe("dhbw.mosbach.neuendorf03.create-survey.Master" , "setDescTitle", this._setDescTitle, this);
 		},
 
 
@@ -265,13 +265,14 @@ sap.ui.define([
 		 * Sets description.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof wui.fre.ui5.bedarfsschein-cockpit.controller.Detail
-		 * @function _setDesc
+		 * @function _setDescTitle
 		 * @param {String} sChannel - channel name.
 		 * @param {String} sEvent - event name.
-		 * @param {String} sDesc - Description to be set.
+		 * @param {Array} aString - Array with description and title to be set.
 		 */
-		_setDesc: function(sChannel, sEvent, sDesc) {
-			this.getView().byId("idTextDesc").setText(sDesc);
+		_setDescTitle: function(sChannel, sEvent, aString) {
+			this.getView().byId("idTextDesc").setText(aString[0]);
+			this.getView().byId("detailViewPage").setTitle(aString[1]);
 		},
 
 		 /**

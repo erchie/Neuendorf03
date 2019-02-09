@@ -2,10 +2,8 @@ sap.ui.define([
 	"dhbw/mosbach/neuendorf03/forum/controller/BaseController",
 	"sap/m/ListMode",
 	"sap/m/MessageBox",
-	"sap/viz/ui5/data/FlattenedDataset",
-	"sap/viz/ui5/data/DimensionDefinition",
-	"sap/viz/ui5/data/MeasureDefinition"
-], function (BaseController, ListMode, MessageBox, FlattenedDataset) {
+	"sap/ui/core/ValueState"
+], function (BaseController, ListMode, MessageBox, ValueState) {
 	"use strict";
 
 	/**
@@ -17,7 +15,7 @@ sap.ui.define([
 	 */
 	return BaseController.extend("dhbw.mosbach.neuendorf03.forum.controller.Detail", {
 
-		surveyId : "",
+		postId : "",
 
 		 /**
 		 * Initialize master page.
@@ -33,35 +31,13 @@ sap.ui.define([
 			this.getOwnerComponent().getRouter().getRoute("detail").attachMatched(this._onRouteMatched, this);
 
 			var oEventBus = sap.ui.getCore().getEventBus();
-			oEventBus.subscribe("dhbw.mosbach.neuendorf03.forum.Master" , "setDesc", this._setDesc, this);
+			oEventBus.subscribe("dhbw.mosbach.neuendorf03.forum.Master" , "setDescTitle", this._setDescTitle, this);
 
-
-			var oVizFrame = this.oVizFrame = this.getView().byId("idVizFrame");
-            oVizFrame.setVizProperties({
-                legend: {
-                    title: {
-                        visible: false
-					}
-                },
-                title: {
-                    text: this.getModel("i18n").getProperty("pieChartTitle")
-				},
-				plotArea: {
-					dataLabel: {
-						visible: true
-					}
-				},
-				interaction: {
-					selectability: {
-						mode: "EXCLUSIVE"
-					}
-				}
-			});
-
-			sap.viz.ui5.api.env.Format.numericFormatter(sap.viz.ui5.format.ChartFormatter.getInstance());
-			var oPopOver = this.getView().byId("idPopOver");
-            oPopOver.connect(oVizFrame.getVizUid());
-            oPopOver.setFormatString(sap.viz.ui5.format.ChartFormatter.DefaultPattern.STANDARDFLOAT);
+			var pathHelper = "dhbw.mosbach.neuendorf03.forum.fragment.";
+			if (!this._editPostDialog) {
+				this._editPostDialog = sap.ui.xmlfragment(this.getView().getId(), pathHelper + "EditDialog", this);
+				this.getView().addDependent(this._editPostDialog);
+			}
 
 		},
 
@@ -75,7 +51,7 @@ sap.ui.define([
 		 */
 		onExit: function () {
 			var oEventBus = sap.ui.getCore().getEventBus();
-			oEventBus.unsubscribe("dhbw.mosbach.neuendorf03.forum.Master" , "setDesc", this._setDesc, this);
+			oEventBus.unsubscribe("dhbw.mosbach.neuendorf03.forum.Master" , "setDescTitle", this._setDescTitle, this);
 		},
 
 
@@ -95,8 +71,7 @@ sap.ui.define([
 				sHash = oHashChanger.getHash(),
 				sNextLayout = this.getModel().getProperty("/actionButtonsInfo/midColumn/fullScreen"),
 				oQuery =  {
-					Path		: sHash.slice(sHash.search(/Path=/) + 5,sHash.search(/\&MultiSelect/)),
-					MultiSelect	: sHash.slice(sHash.search(/MultiSelect=/) + 12)
+					Path		: sHash.slice(sHash.search(/Path=/) + 5)
 				};
 
 			this.getOwnerComponent().getRouter().navTo("detail", {
@@ -130,8 +105,7 @@ sap.ui.define([
 				sHash = oHashChanger.getHash(),
 				sNextLayout = this.getModel().getProperty("/actionButtonsInfo/midColumn/exitFullScreen"),
 				oQuery =  {
-					Path		: sHash.slice(sHash.search(/Path=/) + 5,sHash.search(/\&MultiSelect/)),
-					MultiSelect	: sHash.slice(sHash.search(/MultiSelect=/) + 12)
+					Path		: sHash.slice(sHash.search(/Path=/) + 5)
 				};
 			this.getOwnerComponent().getRouter().navTo("detail", {
 				layout: sNextLayout,
@@ -139,120 +113,154 @@ sap.ui.define([
 			});
 		},
 
-/* ############################ -voting functions- ##################################### */
+		 /**
+		 * Listner. Triggered when like button is pressed.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
+		 * @function onLikeButton
+		 */
+		onLikeButton: function() {
+			var oEntry = {};
+				oEntry.Postid	= this.postId;
+				oEntry.Likes 	= (parseInt(this.getView().byId("idTextLikes").getText(), 10) + 1).toString(10);
+				//dummies, not rly needed for like
+				oEntry.Catid	= "0";
+				oEntry.Userid	= "0";
+				oEntry.Surveyid	= "0";
+				oEntry.Ptitel	= this.getView().byId("detailViewPage").getTitle();
+				oEntry.Ptext	= this.getView().byId("idTextDesc").getText();
+				oEntry.Pdat		= "/Date(" + Date.parse( new Date() ) + ")/";
+				oEntry.Plcdat	= "/Date(" + Date.parse( new Date() ) + ")/";
+
+
+				this.getModel("remote").update("/PostSet(Postid='" + this.postId + "')", oEntry, {
+					success: function() {
+						MessageBox.success(
+							this.getModel("i18n").getProperty("successLike")
+						);
+						this.getModel("remote").refresh();
+						this.getView().byId("idTextLikes").setText(oEntry.Likes);
+						this.getView().byId("idLikeButton").setVisible(false);
+					}.bind(this),
+					error: function() {
+						MessageBox.error(
+							this.getModel("i18n").getProperty("errorLike")
+						);
+					}.bind(this)
+				});
+		},
+
+
+/* ############################ -Edit choice functions- ################################# */
 /* ##################################################################################### */
 
 		 /**
-		 * Listner. Triggered when a item of the coices list is pressed.
-		 * Triggers selection.
-		 * @author Eric Schuster WI16C
+		 * Listner. Triggered when edit button is pressed.
+		 * Opens dialog.
+		 * @author WN00096217 (Eric Schuster)
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
-		 * @function onCoicesList
+		 * @function onEditButton
+		 */
+		onEditButton: function() {
+			this._editPostDialog.open();
+			this.getModel("baseModel").setProperty("/titleInput", this.getView().byId("detailViewPage").getTitle());
+			this.getModel("baseModel").setProperty("/descInput", this.getView().byId("idTextDesc").getText());
+		},
+
+		 /**
+		 * Listner. Triggered when cancel edit dialog button is pressed.
+		 * Closes dialog.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
+		 * @function onCancelButton
+		 */
+		onCancelButton: function() {
+			this._editPostDialog.close();
+			this.getModel("baseModel").setProperty("/titleInput", "");
+			this.getModel("vsModel").setProperty("/postTitle", ValueState.None);
+			this.getModel("baseModel").setProperty("/descInput", "");
+			this.getModel("vsModel").setProperty("/postDesc", ValueState.None);
+		},
+
+		 /**
+		 * Listner. Triggered when ok edit dialog button is pressed.
+		 * Closes dialog.
+		 * Writes to backend.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
+		 * @function onOkButton
+		 */
+		onOkButton: function() {
+
+			if (this.getModel("baseModel").getProperty("/titleInput") === "") {
+				this.getModel("vsModel").setProperty("/postTitle", ValueState.Error);
+			} else if (this.getModel("baseModel").getProperty("/descInput") === "") {
+				this.getModel("vsModel").setProperty("/postDesc", ValueState.Error);
+			} else {
+
+				var oEntry = {};
+				oEntry.Postid	= this.postId;
+				oEntry.Ptitel	= this.getModel("baseModel").getProperty("/titleInput");
+				oEntry.Ptext	= this.getModel("baseModel").getProperty("/descInput");
+				oEntry.Pdat		= "/Date(" + Date.parse( new Date() ) + ")/";
+				oEntry.Plcdat   = oEntry.Pdat;
+				oEntry.Likes 	= this.getView().byId("idTextLikes").getText();
+
+				this.getModel("remote").update("/PostSet(Postid='" + this.postId + "')", oEntry, {
+					success: function() {
+						MessageBox.success(
+							this.getModel("i18n").getProperty("successEdit")
+						);
+						this.getModel("remote").refresh();
+						this._setDescTitle("", "", [oEntry.Ptext, oEntry.Ptitel,oEntry.Likes]);
+						this.onCancelButton();
+					}.bind(this),
+					error: function() {
+						MessageBox.error(
+							this.getModel("i18n").getProperty("errorEdit")
+						);
+					}.bind(this)
+				});
+
+			}
+
+		},
+
+/* ############################ -post functions- ##################################### */
+/* ##################################################################################### */
+
+
+		 /**
+		 * Listner. Triggered when ok edit dialog button is pressed.
+		 * Closes dialog.
+		 * Writes to backend.
+		 * @author WN00096217 (Eric Schuster)
+		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
+		 * @function onPost
 		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
 		 */
-		onCoicesList: function (oEvent) {
-			this.getView().byId("idChooseChoicesList").setSelectedItem(oEvent.getSource(), !oEvent.getSource().getSelected());
-		},
+		onPost: function(oEvent) {
 
-		 /**
-		 * Listner. Triggered when Close button is pressed.
-		 * Closes survey.
-		 * @author Eric Schuster WI16C
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
-		 * @function onCloseSurvey
-		 */
-		onCloseSurvey: function () {
-			var oEntry = {},
-				oHashChanger = new sap.ui.core.routing.HashChanger(),
-				sHash = oHashChanger.getHash(),
-				sSurveyId = sHash.slice(sHash.search(/\('/) + 2,sHash.search(/'\)/));
+			var oEntry = {};
+			oEntry.Comid = "100"; //dummy gets generated in backend
+			oEntry.Postid = this.postId;
+			oEntry.Userid = "0"; //dummy gets generated in backend
+			oEntry.Comdat = "/Date(" + Date.parse( new Date() ) + ")/";
+			oEntry.Comtxt = oEvent.getSource().getProperty("value");
 
-			this.getModel("remote").read( "/SurveySet('" + sSurveyId + "')", {
-				success: function(oRetrievedResult) {
-					oEntry.Id = oRetrievedResult.Id;
-					oEntry.Name = oRetrievedResult.Name;
-					oEntry.Description = oRetrievedResult.Description;
-					oEntry.Multichoice = oRetrievedResult.Multichoice;
-					oEntry.Enddat = "/Date(" + Date.parse( new Date() ) + ")/";
-					this.getModel("remote").update("/SurveySet(Id='" +
-						oEntry.Id + "')", oEntry, {
-						success: function() {
-							MessageBox.success(
-								this.getModel("i18n").getProperty("successClose")
-							);
-							this.onColumnCloseButton();
-							this.getModel("remote").refresh();
-						}.bind(this),
-						error: function() {
-							MessageBox.error(
-								this.getModel("i18n").getProperty("errorClose")
-							);
-						}.bind(this)
-					});
-				}.bind(this),
-				error: function(oError) {
-					MessageBox.error(
-						this.getModel("i18n").getProperty("errorClose")
-					);
-				}.bind(this)
-			});
-		},
-
-		 /**
-		 * Listner. Triggered when save button is pressed.
-		 * Checks for selection.
-		 * @author Eric Schuster WI16C
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
-		 * @function onSaveChoices
-		 */
-		onSaveChoices: function () {
-			if ( this.getView().byId("idChooseChoicesList").getSelectedItems().length < 1 ) {
-				MessageBox.error(
-					this.getModel("i18n").getProperty("atLeastOne")
-				);
-				return;
-			}
-			var mParameters, aDeferredGroup, oEntry = {}, aItems;
-			//set batch id to group all creates of one survey
-			aDeferredGroup = this.getModel("remote").getDeferredGroups();
-			aDeferredGroup.push("batchCreate");
-			this.getModel("remote").setDeferredGroups(aDeferredGroup);
-			mParameters = { groupId:"batchCreate" };
-
-
-
-
-			aItems = this.getView().byId("idChooseChoicesList").getSelectedItems();
-			for ( var i = 0; i < aItems.length; i++ ) {
-				oEntry = {};
-				oEntry = aItems[i].getBindingContext("remote").getObject();
-				this.getModel("remote").update("/ChoiceSet(Choiceid='" +
-				oEntry.Choiceid + "',Surveyid='" +
-				oEntry.Surveyid + "')", oEntry, mParameters);
-			}
-
-			oEntry = {};
-			oEntry.Userid	= "dummy";
-			oEntry.Surveyid	= this.surveyId;
-			this.getModel("remote").create("/VotedSet", oEntry, mParameters);
-
-			//fire batch
-			this.getModel("remote").submitChanges({
-				groupId: "batchCreate",
+			this.getModel("remote").create("/COMMENTSSet", oEntry, {
 				success: function() {
 					MessageBox.success(
-						this.getModel("i18n").getProperty("successVote")
+						this.getModel("i18n").getProperty("successCreateComment")
 					);
-					this._manageVis(true);
 					this.getModel("remote").refresh();
 				}.bind(this),
 				error: function() {
 					MessageBox.error(
-						this.getModel("i18n").getProperty("errorVote")
+						this.getModel("i18n").getProperty("errorCreateComment")
 					);
 				}.bind(this)
 			});
-
 		},
 
 
@@ -265,13 +273,15 @@ sap.ui.define([
 		 * Sets description.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof wui.fre.ui5.bedarfsschein-cockpit.controller.Detail
-		 * @function _setDesc
+		 * @function _setDescTitle
 		 * @param {String} sChannel - channel name.
 		 * @param {String} sEvent - event name.
-		 * @param {String} sDesc - Description to be set.
+		 * @param {Array} aString - Array with description and title to be set.
 		 */
-		_setDesc: function(sChannel, sEvent, sDesc) {
-			this.getView().byId("idTextDesc").setText(sDesc);
+		_setDescTitle: function(sChannel, sEvent, aString) {
+			this.getView().byId("idTextDesc").setText(aString[0]);
+			this.getView().byId("detailViewPage").setTitle(aString[1]);
+			this.getView().byId("idTextLikes").setText(parseInt(aString[2], 10));
 		},
 
 		 /**
@@ -285,99 +295,42 @@ sap.ui.define([
 		 */
 		_onRouteMatched: function (oEvent) {
 
-			var bHasVoted, oCustDataSet,
-				sPath = oEvent.getParameter("arguments")["?query"].Path,
-				oList = this.getView().byId("idChooseChoicesList"),
-				template = new sap.m.StandardListItem({
-					press	: [this.onCoicesList, this],
-					title	: '{remote>Choicetxt}',
-					type	: "Active"
+			var sPath = oEvent.getParameter("arguments")["?query"].Path,
+				oList = this.getView().byId("idCommentsList"),
+				template = new sap.m.FeedListItem({
+					sender		: '{remote>Userid}',
+					timestamp	: '{= ${remote>Comdat}.toDateString() }',
+					text		: '{remote>Comtxt}'
 				});
 
-			this.surveyId = sPath.replace("')", "").replace("SurveySet('", "");
+
+			this.postId = sPath.replace("')", "").replace("PostSet('", "");
 			//close detail column if called via bookmark @todo bookmarkable
 			if (this.getView().byId("idTextDesc").getText() == "" || this.surveyId == "") {
 				this.onColumnCloseButton();
 			}
 
 			//bind List from association
-			oList.bindItems( "remote>/" + sPath  + "/ChoiceSet" , template);
-			//set list select mode
-			if ( oEvent.getParameter("arguments")["?query"].MultiSelect === "true" ) {
-				oList.setMode(ListMode.MultiSelect);
-			} else {
-				oList.setMode(ListMode.SingleSelect);
-			}
+			oList.bindItems( "remote>/" + sPath  + "/COMMENTSSet" , template);
 
-			//bind Pie chart from association
-			oCustDataSet = new FlattenedDataset( {
-
-				dimensions: [{
-					name: "Choice",
-					value: "{remote>Choicetxt}"
-				}],
-
-				measures: [{
-
-					name: "Votes",
-					value: "{remote>Votes}"
-				}],
-
-				data: {
-
-					path: "/" + sPath + "/ChoiceSet"
-
-				}
-
-			});
-
-			this.getView().byId("idVizFrame").setDataset(oCustDataSet);
-			this.getView().byId("idVizFrame").setModel(this.getModel("remote"));
 
 			//manage visibity
-			this.getModel("remote").read( "/" + sPath + "/VotedSet", {
+			this.getModel("remote").read( "/" + sPath + "/LIKESet", {
 				success: function(oRetrievedResult) {
 					if ( oRetrievedResult.results.length > 0 ) {
-						bHasVoted = true;
+						this.getView().byId("idLikeButton").setVisible(false);
 					} else {
-						bHasVoted = false;
+						this.getView().byId("idLikeButton").setVisible(true);
 					}
-					this._manageVis(bHasVoted);
 				}.bind(this),
 				error: function(oError) {
-					oList.setVisible(false);
-					this.getView().byId("idSaveButton").setVisible(false);
-					this.getView().byId("idCloseButton").setVisible(false);
-					this.getView().byId("idVizFrame").setVisible(false);
+					this.getView().byId("idLikeButton").setVisible(false);
 					MessageBox.error(
-						this.getModel("i18n").getProperty("errorCheckVoted")
+						this.getModel("i18n").getProperty("errorCheckLike")
 					);
 				}.bind(this)
 			});
 
-		},
-
-		 /**
-		 * Helper funktion.
-		 * Manages visibility.
-		 * @author Eric Schuster WI16C
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
-		 * @function _manageVis
-		 * @param {Boolean} bHasVoted - Event Object of the press action, provided by the framework.
-		 */
-		_manageVis: function (bHasVoted) {
-
-			if ( this.getModel("roleModel").getProperty("/bIsAdm") ) {
-				this.getView().byId("idChooseChoicesList").setVisible(false);
-				this.getView().byId("idSaveButton").setVisible(false);
-				this.getView().byId("idCloseButton").setVisible(true);
-				this.getView().byId("idVizFrame").setVisible(true);
-			} else {
-				this.getView().byId("idChooseChoicesList").setVisible(!bHasVoted);
-				this.getView().byId("idSaveButton").setVisible(!bHasVoted);
-				this.getView().byId("idCloseButton").setVisible(false);
-				this.getView().byId("idVizFrame").setVisible(bHasVoted);
-			}
 
 		}
 

@@ -101,10 +101,6 @@ sap.ui.define([
 				this.getModel("vsModel").setProperty("/postDesc", ValueState.Error);
 				bOk = false;
 			}
-			if ( this.getModel("baseModel").getProperty("/newPostCat") === undefined ) {
-				this.getModel("vsModel").setProperty("/surveyEndDate", ValueState.Error);
-				bOk = false;
-			}
 
 			if (bOk){
 
@@ -155,12 +151,15 @@ sap.ui.define([
 
 
 
-			oEntry.Postid = 1; //dummy value id is calculated in backend
-			oEntry.Ptitle = this.getModel("baseModel").getProperty("/titleInput");
-			oEntry.Ptext = this.getModel("baseModel").getProperty("/descInput");
-			oEntry.Catid = this.getModel("baseModel").getProperty("/newPostCat");
+			oEntry.Postid	= "0"; //dummy value id is calculated in backend
+			oEntry.Ptitel	= this.getModel("baseModel").getProperty("/titleInput");
+			oEntry.Ptext	= this.getModel("baseModel").getProperty("/descInput");
+			oEntry.Catid	= this.getView().byId("idSelect").getSelectedItem().getKey();
+			oEntry.Pdat		= "/Date(" + Date.parse( new Date() ) + ")/";
+			oEntry.Plcdat   = oEntry.Pdat;
+			oEntry.Likes 	= "0";
 
-			this.getModel("remote").create("/SurveySet", oEntry, {
+			this.getModel("remote").create("/PostSet", oEntry, {
 				success: function() {
 					MessageBox.success(
 						this.getModel("i18n").getProperty("sentCreatePost")

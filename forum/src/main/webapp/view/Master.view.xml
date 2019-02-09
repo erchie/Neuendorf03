@@ -9,9 +9,14 @@
 	xmlns:f="sap.f"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Table
-		id="idBDSTable"
+		id="idMasterList"
 		updateFinished="onUpdateFinished"
-		items="{remote>/PostSet}">
+		items="{
+			path: 'remote>/PostSet',
+			parameters: {
+				'expand': 'CATEGORIE'
+			}
+		}">
 		<headerToolbar>
 			<Toolbar>
 				<Title
@@ -21,12 +26,11 @@
 				<Button
 					icon="sap-icon://add"
 					text="{i18n>addButton}"
-					press="onNewSurveyButton" />
+					press="onNewPostButton" />
 			</Toolbar>
 		</headerToolbar>
 
 		<columns>
-
 
 			<Column>
 				<Text
@@ -54,19 +58,17 @@
 					text="{i18n>colLikes}" />
 			</Column>
 
-
-
 		</columns>
 		<items>
 			<ColumnListItem
-					press="onBDSTable"
+					press="onMasterTable"
 					type="Navigation">
 				<cells>
 
 					<Text
-						text="{remote>Ptitle}"/>
+						text="{remote>Ptitel}"/>
 					<Text
-						text="{remote>Catid}"/>
+						text="{remote>CATEGORIE/Cattitle}"/>
 					<Text
 						text="{
 							path: 'remote>Pdat',
@@ -78,10 +80,9 @@
 							type: 'sap.ui.model.type.Date'
 						}"/>
 					<ObjectNumber
-						number="{remote>Likes}"
-						state="{
-							path: 'bdsRM>Rutim',
-							formatter: '.formatter.durationCol'
+						number="{
+							path: 'remote>Likes',
+							formatter: '.formatter.toInt'
 						}"/>
 
 				</cells>

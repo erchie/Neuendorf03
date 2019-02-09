@@ -1,0 +1,78 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+
+	<Dialog title="{i18n>editPost}">
+		<content>
+
+
+				<f:Form
+				editable="true">
+				<f:layout>
+					<f:ResponsiveGridLayout
+						labelSpanXL="3"
+						labelSpanL="3"
+						labelSpanM="3"
+						labelSpanS="12"
+						adjustLabelSpan="false"
+						emptySpanXL="4"
+						emptySpanL="4"
+						emptySpanM="4"
+						emptySpanS="0"
+						columnsXL="1"
+						columnsL="1"
+						columnsM="1"
+						singleContainerFullSize="false" />
+				</f:layout>
+				<f:formContainers>
+					<f:FormContainer>
+						<f:formElements>
+							<f:FormElement>
+							    <f:label>
+									<Label
+										text="{i18n>titelLabel}"
+										required="true"/>
+								</f:label>
+								<f:fields>
+									<Input
+										value="{baseModel>/titleInput}"
+										valueState="{vsModel>/postTitle}"
+										valueStateText="{i18n>vstpostTitle}"/>
+								</f:fields>
+							</f:FormElement>
+							<f:FormElement>
+								<f:label>
+									<Label
+										text="{i18n>descLabel}"
+										required="true"/>
+								</f:label>
+								<f:fields>
+									<TextArea
+										value="{baseModel>/descInput}"
+										cols="15"
+										rows="3"
+										valueState="{vsModel>/postDesc}"
+										valueStateText="{i18n>vstpostDesc}"/>
+								</f:fields>
+							</f:FormElement>
+
+						</f:formElements>
+					</f:FormContainer>
+				</f:formContainers>
+			</f:Form>
+
+		</content>
+		<beginButton>
+			<Button
+				text="{i18n>okButton}"
+				press="onOkButton" />
+		</beginButton>
+		<endButton>
+			<Button
+				text="{i18n>cancelButton}"
+				press="onCancelButton" />
+		</endButton>
+	</Dialog>
+
+</core:FragmentDefinition>
