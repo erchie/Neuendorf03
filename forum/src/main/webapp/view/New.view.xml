@@ -95,13 +95,15 @@
 								</f:label>
 								<f:fields>
 									<Select
+										id="idSelect"
 										forceSelection="true"
-										selectedItem="{baseModel>/newPostCat}"
+										valueState="{vsModel>/postCat}"
+										valueStateText="{i18n>vstPostCat}"
 										items="{
 											path: 'remote>/CATEGORIESet',
 											sorter: { path: 'remote>Cattitle' }
 										}">
-										<core:Item key="{remore>Catid}" text="{remote>Cattitle}" />
+										<core:Item key="{remote>Catid}" text="{remote>Cattitle}" />
 									</Select>
 								</f:fields>
 							</f:FormElement>

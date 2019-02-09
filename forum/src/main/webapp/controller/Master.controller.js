@@ -73,14 +73,14 @@ sap.ui.define([
 		},
 
 		 /**
-		 * Listner. Triggered when new survey button is pressed.
-		 * Opens form for new survey in mid column column.
+		 * Listner. Triggered when new post button is pressed.
+		 * Opens form for new post in mid column column.
 		 * @author Eric Schuster WI16C
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Master
-		 * @function onNewSurveyButton
+		 * @function onNewPostButton
 		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
 		 */
-		onNewSurveyButton: function (oEvent) {
+		onNewPostButton: function (oEvent) {
 			var	oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(1);
 
 			//Nav to next page/opens 2nd column

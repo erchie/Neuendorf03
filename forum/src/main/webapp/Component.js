@@ -40,9 +40,7 @@ sap.ui.define([
 			this.setModel(oBaseModel, "baseModel");
 
 			var oVsModel = new JSONModel({
-				newChoice 		: ValueState.None,
-				newPostCat		: ValueState.None,
-				surveyEndDate	: ValueState.None,
+				postCat 		: ValueState.None,
 				postDesc		: ValueState.None,
 				postTitle		: ValueState.None
 			});

@@ -122,7 +122,16 @@ sap.ui.define([
 		onLikeButton: function() {
 			var oEntry = {};
 				oEntry.Postid	= this.postId;
-				oEntry.Likes 	= parseInt(this.getView().byId("idTextLikes").getText(), 10) + 1;
+				oEntry.Likes 	= (parseInt(this.getView().byId("idTextLikes").getText(), 10) + 1).toString(10);
+				//dummies, not rly needed for like
+				oEntry.Catid	= "0";
+				oEntry.Userid	= "0";
+				oEntry.Surveyid	= "0";
+				oEntry.Ptitel	= this.getView().byId("detailViewPage").getTitle();
+				oEntry.Ptext	= this.getView().byId("idTextDesc").getText();
+				oEntry.Pdat		= "/Date(" + Date.parse( new Date() ) + ")/";
+				oEntry.Plcdat	= "/Date(" + Date.parse( new Date() ) + ")/";
+
 
 				this.getModel("remote").update("/PostSet(Postid='" + this.postId + "')", oEntry, {
 					success: function() {
@@ -195,7 +204,7 @@ sap.ui.define([
 				oEntry.Ptext	= this.getModel("baseModel").getProperty("/descInput");
 				oEntry.Pdat		= "/Date(" + Date.parse( new Date() ) + ")/";
 				oEntry.Plcdat   = oEntry.Pdat;
-				oEntry.Likes 	= 0;
+				oEntry.Likes 	= this.getView().byId("idTextLikes").getText();
 
 				this.getModel("remote").update("/PostSet(Postid='" + this.postId + "')", oEntry, {
 					success: function() {
@@ -203,8 +212,8 @@ sap.ui.define([
 							this.getModel("i18n").getProperty("successEdit")
 						);
 						this.getModel("remote").refresh();
-						this.getModel("baseModel").setProperty("/titleInput", oEntry.Ptitel);
-						this.getModel("baseModel").setProperty("/descInput", oEntry.Ptext);
+						this._setDescTitle("", "", [oEntry.Ptext, oEntry.Ptitel,oEntry.Likes]);
+						this.onCancelButton();
 					}.bind(this),
 					error: function() {
 						MessageBox.error(
@@ -228,17 +237,18 @@ sap.ui.define([
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
 		 * @function onPost
+		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
 		 */
 		onPost: function(oEvent) {
 
 			var oEntry = {};
-			oEntry.Comid = 1; //dummy gets generated in backend
+			oEntry.Comid = "100"; //dummy gets generated in backend
 			oEntry.Postid = this.postId;
-			oEntry.Userid = 1; //dummy gets generated in backend
+			oEntry.Userid = "0"; //dummy gets generated in backend
 			oEntry.Comdat = "/Date(" + Date.parse( new Date() ) + ")/";
 			oEntry.Comtxt = oEvent.getSource().getProperty("value");
 
-			this.getModel("remote").create("/PostSet", oEntry, {
+			this.getModel("remote").create("/COMMENTSSet", oEntry, {
 				success: function() {
 					MessageBox.success(
 						this.getModel("i18n").getProperty("successCreateComment")
@@ -294,7 +304,7 @@ sap.ui.define([
 				});
 
 
-			this.surveyId = sPath.replace("')", "").replace("PostSet('", "");
+			this.postId = sPath.replace("')", "").replace("PostSet('", "");
 			//close detail column if called via bookmark @todo bookmarkable
 			if (this.getView().byId("idTextDesc").getText() == "" || this.surveyId == "") {
 				this.onColumnCloseButton();
@@ -321,30 +331,6 @@ sap.ui.define([
 				}.bind(this)
 			});
 
-
-		},
-
-		 /**
-		 * Helper funktion.
-		 * Manages visibility.
-		 * @author Eric Schuster WI16C
-		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.Detail
-		 * @function _manageVis
-		 * @param {Boolean} bHasVoted - Event Object of the press action, provided by the framework.
-		 */
-		_manageVis: function (bHasVoted) {
-
-			if ( this.getModel("roleModel").getProperty("/bIsAdm") ) {
-				this.getView().byId("idChooseChoicesList").setVisible(false);
-				this.getView().byId("idSaveButton").setVisible(false);
-				this.getView().byId("idCloseButton").setVisible(true);
-				this.getView().byId("idVizFrame").setVisible(true);
-			} else {
-				this.getView().byId("idChooseChoicesList").setVisible(!bHasVoted);
-				this.getView().byId("idSaveButton").setVisible(!bHasVoted);
-				this.getView().byId("idCloseButton").setVisible(false);
-				this.getView().byId("idVizFrame").setVisible(bHasVoted);
-			}
 
 		}
 

@@ -26,7 +26,7 @@
 				<Button
 					icon="sap-icon://add"
 					text="{i18n>addButton}"
-					press="onNewSurveyButton" />
+					press="onNewPostButton" />
 			</Toolbar>
 		</headerToolbar>
 
