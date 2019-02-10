@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controller/FlexColLayout.controller.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controller/FlexColLayout.controller.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>sap.ui.define([
+	"sap/ui/core/mvc/Controller"
+], function (Controller) {
+	"use strict";
+
+	/**
+	 * Service Controller.
+	 * Collective of functions used for navigation.
+	 * @class dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+	 * @augments sap.ui.core.mvc.Controller
+	 */
+	return Controller.extend("dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout", {
+
+		 /**
+		 * Initialize layout page.
+		 * Sets all needed routing configuration.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+		 * @function onInit
+		 * @override
+		 */
+		onInit: function () {
+			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+			this.oRouter = this.getOwnerComponent().getRouter();
+			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
+			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+		},
+
+		 /**
+		 * Listner. Triggered before a route is matched.
+		 * Defines next layout state.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+		 * @function onBeforeRouteMatched
+		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
+		 */
+		onBeforeRouteMatched: function(oEvent) {
+
+			var oModel = this.getOwnerComponent().getModel();
+
+			var sLayout = oEvent.getParameters().arguments.layout;
+
+			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
+			if (!sLayout) {
+				var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(0);
+				sLayout = oNextUIState.layout;
+			}
+
+			// Update the layout of the FlexibleColumnLayout
+			if (sLayout) {
+				oModel.setProperty("/layout", sLayout);
+			}
+		},
+
+		 /**
+		 * Listner. Triggered when a route is matched.
+		 * Triggers UI elements update.
+		 * Stores route name globaly.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+		 * @function onRouteMatched
+		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
+		 */
+		onRouteMatched: function (oEvent) {
+			var sRouteName = oEvent.getParameter("name");
+
+			this._updateUIElements();
+
+			// Save the current route name
+			this.currentRouteName = sRouteName;
+		},
+		 /**
+		 * ! Query needs to be added to standard to sustain bookmarkable navigation.
+		 * Listner. Triggered when state changes.
+		 * Triggers UI elements update.
+		 * Triggers navigation.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+		 * @function onStateChanged
+		 * @param {sap.ui.base.Event} oEvent - Event Object of the press action, provided by the framework.
+		 */
+		onStateChanged: function (oEvent) {
+			var bIsNavigationArrow = oEvent.getParameter("isNavigationArrow"),
+				sLayout = oEvent.getParameter("layout"),
+				oQuery = this.getOwnerComponent().getModel("baseModel").getProperty("/oQuery");
+
+			this._updateUIElements();
+
+			// Replace the URL with the new layout if a navigation arrow was used
+			if (bIsNavigationArrow) {
+				if ( oQuery !== undefined ) {
+					this.oRouter.navTo(this.currentRouteName, {layout: sLayout, query: oQuery}, true);
+				} else {
+					this.oRouter.navTo(this.currentRouteName, {layout: sLayout}, true);
+				}
+			}
+		},
+
+		 /**
+		 * Helper function.
+		 * Updates the close/fullscreen buttons visibility.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+		 * @function _updateUIElements
+		 */
+		_updateUIElements: function () {
+			var oModel = this.getOwnerComponent().getModel();
+			var oUIState = this.getOwnerComponent().getHelper().getCurrentUIState();
+			oModel.setData(oUIState);
+		},
+
+		/**
+		 * Listner.
+		 * Detaches routes.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout
+		 * @function onExit
+		 */
+		onExit: function () {
+			this.oRouter.detachRouteMatched(this.onRouteMatched, this);
+			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+		}
+	});
+}, true);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="dhbw.mosbach.neuendorf03.create-survey.Component.html">Component</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.BaseController.html">BaseController</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.Detail.html">Detail</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout.html">FlexColLayout</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.Master.html">Master</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.New.html">New</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.NotFound.html">NotFound</a></li></ul><h3>Namespaces</h3><ul><li><a href="formatter.html">formatter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#init">init</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 04 2019 11:46:41 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

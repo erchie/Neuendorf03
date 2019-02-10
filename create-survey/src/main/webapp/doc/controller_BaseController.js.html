@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: controller/BaseController.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: controller/BaseController.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>sap.ui.define([
+	"sap/ui/core/mvc/Controller",
+	"dhbw/mosbach/neuendorf03/create-survey/model/formatter"
+], function (Controller, formatter) {
+	"use strict";
+
+	 /**
+	 * Service Controller.
+	 * Collective of functions used in multiple controllers.
+	 * @class dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+	 * @augments sap.ui.core.mvc.Controller
+	 */
+	return Controller.extend("dhbw.mosbach.neuendorf03.create-survey.controller.BaseController", {
+
+		/**
+		 * Make the (static) formatters available in all sub-controllers
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 */
+		formatter: formatter,
+
+		 /**
+		 * Initialize all pages page.
+		 * @author Eric Schuster WI16C
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 * @function onInit
+		 * @override
+		 */
+		onInit: function () {
+		},
+
+
+
+		/**
+		 * Convenience method for accessing the router.
+		 * @public
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 * @returns {sap.ui.core.routing.Router} the router for this component
+		 */
+		// getRouter : function () {
+		// 	return sap.ui.core.UIComponent.getRouterFor(this);
+		// },
+
+		/**
+		 * Convenience method for getting the view model by name.
+		 * @public
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 * @param {string} [sName] the model name
+		 * @returns {sap.ui.model.Model} the model instance
+		 */
+		getModel : function (sName) {
+			return this.getView().getModel(sName) || this.getOwnerComponent().getModel(sName);
+		}
+
+		/**
+		 * Convenience method for setting the view model.
+		 * @public
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 * @param {sap.ui.model.Model} oModel the model instance
+		 * @param {string} sName the model name
+		 * @returns {sap.ui.mvc.View} the view instance
+		 */
+		// setModel : function (oModel, sName) {
+		// 	return this.getView().setModel(oModel, sName);
+		// },
+
+		/**
+		 * Getter for the resource bundle.
+		 * @public
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
+		 */
+		// getResourceBundle : function () {
+		// 	return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+		// },
+
+		/**
+		 * Event handler for navigating back.
+		 * It there is a history entry or an previous app-to-app navigation we go one step back in the browser history
+		 * If not, it will navigate to the shell home
+		 * @public
+		 * @memberof dhbw.mosbach.neuendorf03.create-survey.controller.BaseController
+		 */
+		// onNavBack : function() {
+		// 	var sPreviousHash = History.getInstance().getPreviousHash(),
+		// 		oCrossAppNavigator = sap.ushell ? sap.ushell.Container.getService("CrossApplicationNavigation") : null;
+
+		// 	if (sPreviousHash !== undefined || (oCrossAppNavigator &amp;&amp; !oCrossAppNavigator.isInitialNavigation()) ) {
+		// 		history.go(-1);
+		// 	} else if (oCrossAppNavigator) {
+		// 		oCrossAppNavigator.toExternal({
+		// 			target: {shellHash: "#Shell-home"}
+		// 		});
+		// 	} else {
+		// 		this.getRouter().navTo("home");
+		// 	}
+		// }
+	});
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="dhbw.mosbach.neuendorf03.create-survey.Component.html">Component</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.BaseController.html">BaseController</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.Detail.html">Detail</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.FlexColLayout.html">FlexColLayout</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.Master.html">Master</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.New.html">New</a></li><li><a href="dhbw.mosbach.neuendorf03.create-survey.controller.NotFound.html">NotFound</a></li></ul><h3>Namespaces</h3><ul><li><a href="formatter.html">formatter</a></li></ul><h3>Global</h3><ul><li><a href="global.html#init">init</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Feb 04 2019 11:46:40 GMT+0100 (Mitteleuropäische Zeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
