@@ -306,7 +306,7 @@ sap.ui.define([
 
 			this.postId = sPath.replace("')", "").replace("PostSet('", "");
 			//close detail column if called via bookmark @todo bookmarkable
-			if (this.getView().byId("idTextDesc").getText() == "" || this.surveyId == "") {
+			if (this.getView().byId("idTextDesc").getText() == "" || this.postId == "") {
 				this.onColumnCloseButton();
 			}
 

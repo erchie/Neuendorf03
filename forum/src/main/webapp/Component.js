@@ -30,7 +30,6 @@ sap.ui.define([
 		init : function () {
 			var oBaseModel = new JSONModel({
 				newPostCat		: undefined,
-				surveyPath		: "",
 				titleInput 		: "",
 				descInput		: "",
 				endDatePicker	: undefined,
