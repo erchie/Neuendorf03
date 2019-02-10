@@ -138,10 +138,9 @@ sap.ui.define([
 
 
 		 /**
-		 * Helper function for creating surveys.
-		 * Attempts to write surveys into backend.
+		 * Helper function for creating posts.
+		 * Attempts to write posts into backend.
 		 * Displays error/success message.
-		 * @todo change to deep insert, associtations in backend, to be tested.
 		 * @author WN00096217 (Eric Schuster)
 		 * @memberof dhbw.mosbach.neuendorf03.forum.controller.New
 		 * @function _createPost
